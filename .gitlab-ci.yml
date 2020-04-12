@@ -14,7 +14,7 @@ build_server:
   - go build .
   artifacts:
     paths:
-    - server/server
+    - server
   only:
   - master
 
@@ -25,6 +25,7 @@ build_client:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
   - cd client
+  - npm install
   - npm run build
   artifacts:
     paths:
