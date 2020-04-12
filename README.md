@@ -4,8 +4,21 @@
 
 A real-time definition guessing game to play with your friends
 
-To run:
+# Development
+
+## Client Side
+
+Start the React dev server:
 
 ```sh
-go run .
+$ cd client
+$ npm run start
+```
+
+## Server Side
+
+Make sure you copy `werdz.yaml.sample` to `werdz.yaml` and adjust as necessary
+
+```sh
+$ go run .
 ```
