@@ -9,7 +9,6 @@ build_server:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
   - cd server
-  - go mod download
   - go build .
   artifacts:
     paths:
@@ -50,6 +49,7 @@ test_client:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
   - cd client
+  - npm install
   - npm run test
   only:
   - master
