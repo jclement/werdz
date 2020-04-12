@@ -1,11 +1,9 @@
 stages:
-  - build_server
-  - test_server
-  - build_client
-  - test_client
+  - Build
+  - Test
   
 build_server:
-  stage:  build_server
+  stage:  Build
   image: golang:1.14
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -20,7 +18,7 @@ build_server:
   - master
 
 build_client:
-  stage:  build_client
+  stage:  Build
   image: node:12
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -35,7 +33,7 @@ build_client:
   - master
 
 test_server:
-  stage:  test_server
+  stage:  Test
   image: golang:1.14
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -46,7 +44,7 @@ test_server:
   - master
 
 test_client:
-  stage:  test_server
+  stage:  Test
   image: node:12
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
