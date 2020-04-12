@@ -1,0 +1,13 @@
+
+## Bind service to IP/Port #########################################
+## Note: binding to localhost prevents the annoying Mac firewall error on every exec
+#Listen: 127.0.0.1:5000
+#Listen: :8100
+
+## Static Files Directory ##########################################
+#StaticDir: ./static/
+
+## Mattermost Webhook ##############################################
+#Webhook: https://chat.zeos.ca/hooks/????????
+#WebhookUser: Development Instance
+#WebhookImage: https://www.mattermost.org/wp-content/uploads/2016/04/icon.png
