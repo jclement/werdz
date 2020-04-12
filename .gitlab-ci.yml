@@ -1,0 +1,52 @@
+stages:
+  - build_server
+  - build_client
+  #- test_client
+  
+build_server:
+  stage:  build_server
+  image: golang:1.14
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+  - cd server
+  - go mod download
+  - go build .
+  artifacts:
+    paths:
+    - server/server
+  only:
+  - master
+
+build_client:
+  stage:  build_client
+  image: node:12
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+  - cd client
+  - npm run build
+  artifacts:
+    paths:
+    - build
+  only:
+  - master
+
+# deploy:
+#   stage:  deploy
+#   image: alpine:latest
+#   before_script:
+#     - apk update && apk add openssh-client bash rsync
+#     - eval $(ssh-agent -s)
+#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#     - mkdir -p ~/.ssh
+#     - chmod 700 ~/.ssh
+#     - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+#     - chmod 644 ~/.ssh/known_hosts
+#   environment:
+#     name: production
+#     url: zeos.ca
+#   script:
+#     - rsync -hrvz --delete --exclude=_ -e "ssh" --progress public/ deploy_zeos@wilbur.zeos.ca:/var/www/zeos.ca
+#   only:
+#     - master
