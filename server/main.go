@@ -2,12 +2,16 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
 
 	"github.com/spf13/viper"
 	"gitlab.adipose.net/jeff/werdz/util/mattermost"
 )
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
+
 	// Default configuration settings
 	viper.SetDefault("Listen", "localhost:8100")
 
