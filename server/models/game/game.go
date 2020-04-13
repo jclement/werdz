@@ -29,6 +29,9 @@ const (
 	StateComplete
 )
 
+// GameID is the unique ID for a game
+type GameID string
+
 // PlayerID is the unique ID for a player
 type PlayerID string
 
@@ -75,7 +78,7 @@ type RoundData struct {
 
 // Game represents the state of an instance of a game
 type Game struct {
-	ID            string
+	ID            GameID
 	State         State
 	Mode          Mode
 	RoundDuration int
@@ -84,9 +87,10 @@ type Game struct {
 	CurrentRound  int
 	RoundData     []RoundData
 	StartTime     time.Time
+	wordSource    func() (word, definition string)
 }
 
-func generateRoomID() string {
+func generateGameID() GameID {
 	letters := []rune("23456789ABCDEFGHJKMNPQRSTUVWXYZ")
 	id := make([]rune, 5)
 
@@ -94,12 +98,12 @@ func generateRoomID() string {
 		id[i] = letters[rand.Intn(len(letters))]
 	}
 
-	return string(id)
+	return GameID(id)
 }
 
 // GeneratePlayerID generates a unique ID for a player
 func GeneratePlayerID() PlayerID {
-	letters := []rune("123456789ABCDEFGHJKMNPQRSTUVWXYZ")
+	letters := []rune("abcdefghijklmnopqrstuvwxyz123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	id := make([]rune, 20)
 
 	for i := range id {
@@ -110,51 +114,55 @@ func GeneratePlayerID() PlayerID {
 }
 
 // NewGame returns a new game instance
-func NewGame(mode Mode, maxRounds int, roundDuration int) Game {
+func NewGame(wordSource func() (word, definition string), mode Mode, maxRounds int, roundDuration int) Game {
 	// bail on unreasonable maxRounds or roundDuration
 	return Game{
-		ID:            generateRoomID(),
+		ID:            generateGameID(),
 		Mode:          mode,
 		MaxRounds:     maxRounds,
 		RoundDuration: roundDuration,
 		CurrentRound:  0,
 		State:         StateNew,
+		wordSource:    wordSource,
 	}
 }
 
 // AddPlayer adds a player to the game
-func (g *Game) AddPlayer(id PlayerID, name string) {
+func (g *Game) AddPlayer(id PlayerID, name string) error {
 	// make sure player doesn't exist already
 	g.Players = append(g.Players, PlayerState{ID: id, Name: name, Active: true})
-
+	return nil
 }
 
 // StartGame begins the game
-func (g *Game) StartGame() {
+func (g *Game) StartGame() error {
 	// bail if game already started
 	// bail if no players
 	g.State = StateComplete
 	g.StartTime = time.Now()
+	return nil
 }
 
 // CloseSubmissionsForCurrentRound closes the round for new definions from players and starts voting
-func (g *Game) CloseSubmissionsForCurrentRound() {
-
+func (g *Game) CloseSubmissionsForCurrentRound() error {
+	return nil
 }
 
 // CloseCurrentRound closes voting on the current round and tallies up the scores
-func (g *Game) CloseCurrentRound() {
+func (g *Game) CloseCurrentRound() error {
+	return nil
 
 }
 
 // SubmitWord submits a definition
-func (g *Game) SubmitWord(player PlayerID, round int, definition string) {
-
+func (g *Game) SubmitWord(player PlayerID, round int, definition string) error {
+	return nil
 }
 
 // EndGame sets a game status to complete
-func (g *Game) EndGame() {
+func (g *Game) EndGame() error {
 	g.State = StateComplete
+	return nil
 }
 
 // Serialize the game to a writer

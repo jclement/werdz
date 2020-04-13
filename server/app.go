@@ -43,5 +43,6 @@ func (a *App) Run(addr string) {
 
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/test/", a.sayHello).Methods("POST")
+	a.Router.HandleFunc("/api/player/generate", a.generatePlayerID).Methods("GET")
 	a.Router.HandleFunc("/books/{title}/page/{page}", a.sampleBooks).Methods("GET")
 }
