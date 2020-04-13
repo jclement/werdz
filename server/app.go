@@ -1,13 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
-	"os"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/urfave/negroni"
 )
 
 // App represents an instance of the application server
@@ -25,22 +23,16 @@ func (a *App) Initialize() {
 
 // Run starts the application server runnning
 func (a *App) Run(addr string) {
-	log.Fatal(http.ListenAndServe(addr, handlers.LoggingHandler(os.Stdout, a.Router)))
+	n := negroni.New()
+
+	n.Use(negroni.NewLogger())
+	n.Use(negroni.NewRecovery())
+	n.UseHandler(a.Router)
+
+	log.Fatal(http.ListenAndServe(addr, n))
 }
 
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/test/", a.sayHello).Methods("POST")
 	a.Router.HandleFunc("/books/{title}/page/{page}", a.sampleBooks).Methods("GET")
-}
-
-func (a *App) respondWithError(w http.ResponseWriter, code int, message string) {
-	a.respondWithJSON(w, code, map[string]string{"error": message})
-}
-
-func (a *App) respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	response, _ := json.Marshal(payload)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	w.Write(response)
 }

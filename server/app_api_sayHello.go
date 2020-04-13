@@ -1,28 +1,27 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"gitlab.adipose.net/jeff/werdz/util/webservice"
 )
 
 type helloRequest struct {
-	Name string
+	Name string `json:"name"`
 }
 
 type helloResponse struct {
-	Msg string
+	Msg string `json:"msg"`
 }
 
 func (a *App) sayHello(w http.ResponseWriter, r *http.Request) {
-
-	var hR helloRequest
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&hR); err != nil {
-		a.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+	var payload helloRequest
+	if err := webservice.HandleJSONRequest(w, r, &payload); err != nil {
 		return
 	}
-	defer r.Body.Close()
-
-	a.respondWithJSON(w, 200, helloResponse{Msg: fmt.Sprintf("Hello %s!", hR.Name)})
+	if payload.Name == "Jeff" {
+		panic("ahh")
+	}
+	webservice.RespondWithJSON(w, http.StatusOK, helloResponse{Msg: fmt.Sprintf("Hello %s!", payload.Name)})
 }

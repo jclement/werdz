@@ -16,10 +16,10 @@ export class App extends React.Component<{}, any> {
 
   handleButton() {
     axios.post("/api/test/", {
-      Name: "World"
+      name: "World"
     }).then((response) => {
       this.setState({
-        msg: response.data.Msg
+        msg: response.data.msg
       })
     })
   }

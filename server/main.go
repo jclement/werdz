@@ -11,7 +11,7 @@ func main() {
 	viper.SetDefault("Listen", "localhost:8100")
 
 	// Parse configuration files
-	viper.SetConfigName("werdz")
+	viper.SetConfigName("werdz.yaml")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
 	err := viper.ReadInConfig()
