@@ -2,6 +2,7 @@ package webservice
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 )
 
@@ -21,7 +22,8 @@ func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 
 // HandleJSONRequest parses a request and raises an error if necessary
 func HandleJSONRequest(w http.ResponseWriter, r *http.Request, payload interface{}) error {
-	decoder := json.NewDecoder(r.Body)
+	limitedBodyReader := io.LimitedReader{R: r.Body, N: 1048576}
+	decoder := json.NewDecoder(&limitedBodyReader)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&payload); err != nil {
 		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
