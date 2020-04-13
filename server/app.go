@@ -31,7 +31,7 @@ func (a *App) Run(addr string) {
 		AllowedMethods: []string{"GET", "POST"}, // Allowing only get, just an example
 	})
 
-	log.Fatal(http.ListenAndServe(addr, handlers.LoggingHandler(os.Stdout, c.Handler(a.Router))))
+	log.Fatal(http.ListenAndServe(addr, handlers.LoggingHandler(os.Stdout, a.Router)))
 }
 
 func (a *App) initializeRoutes() {

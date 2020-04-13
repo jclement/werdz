@@ -15,7 +15,7 @@ export class App extends React.Component<{}, any> {
   }
 
   handleButton() {
-    axios.post("http://localhost:8100/api/test/", {
+    axios.post("/api/test/", {
       Name: "World"
     }).then((response) => {
       this.setState({
