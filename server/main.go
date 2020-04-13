@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/viper"
+	"gitlab.adipose.net/jeff/werdz/util/mattermost"
 )
 
 func main() {
@@ -25,5 +26,12 @@ func main() {
 
 	a := App{}
 	a.Initialize()
+
+	a.SetMattermostWebhook(mattermost.New(
+		viper.GetString("WebhookURL"),
+		viper.GetString("WebhookUser"),
+		viper.GetString("WebhookImageURL"),
+	))
+
 	a.Run(viper.GetString("Listen"))
 }

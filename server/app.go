@@ -6,11 +6,13 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/urfave/negroni"
+	"gitlab.adipose.net/jeff/werdz/util/mattermost"
 )
 
 // App represents an instance of the application server
 type App struct {
-	Router *mux.Router
+	Router     *mux.Router
+	Mattermost mattermost.Webhook
 }
 
 // Initialize initializes up the application server
@@ -21,6 +23,11 @@ func (a *App) Initialize() {
 	a.initializeRoutes()
 }
 
+// SetMattermostWebhook sets a webhook for mattermost logging
+func (a *App) SetMattermostWebhook(w mattermost.Webhook) {
+	a.Mattermost = w
+}
+
 // Run starts the application server runnning
 func (a *App) Run(addr string) {
 	n := negroni.New()
@@ -28,6 +35,8 @@ func (a *App) Run(addr string) {
 	n.Use(negroni.NewLogger())
 	n.Use(negroni.NewRecovery())
 	n.UseHandler(a.Router)
+
+	a.Mattermost.Post("Server Starting")
 
 	log.Fatal(http.ListenAndServe(addr, n))
 }
