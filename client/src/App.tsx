@@ -1,15 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Button from 'react-bootstrap/Button';
+import axios from 'axios'
 
-function App() {
-  return (
-    <div>
-      Test<br />
-      <Button onClick={() => {console.log("click")}}>Test Button</Button>
-    </div>
-  );
+export class App extends React.Component<{}, any> {
+
+  constructor(props: any) {
+    super(props)
+    this.state = {
+      msg : "Nothing Here"
+    }
+
+    this.handleButton = this.handleButton.bind(this)
+  }
+
+  handleButton() {
+    axios.post("http://localhost:8100/api/test/", {
+      Name: "World"
+    }).then((response) => {
+      this.setState({
+        msg: response.data.Msg
+      })
+    })
+  }
+
+  render() {
+    return (
+      <div>
+        Message: <b>{this.state.msg}</b><br/>
+        <Button onClick={this.handleButton}>Test Button</Button>
+      </div>
+    );
+  }
 }
 
 export default App;

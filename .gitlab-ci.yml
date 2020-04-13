@@ -38,7 +38,7 @@ test_server:
     GIT_SUBMODULE_STRATEGY: recursive
   script:
   - cd server
-  - go test .
+  - go test ./... -cover
   only:
   - master
 
