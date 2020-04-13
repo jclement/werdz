@@ -8,7 +8,6 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 )
 
 // App represents an instance of the application server
@@ -26,11 +25,6 @@ func (a *App) Initialize() {
 
 // Run starts the application server runnning
 func (a *App) Run(addr string) {
-	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},           // All origins
-		AllowedMethods: []string{"GET", "POST"}, // Allowing only get, just an example
-	})
-
 	log.Fatal(http.ListenAndServe(addr, handlers.LoggingHandler(os.Stdout, a.Router)))
 }
 
