@@ -36,8 +36,7 @@ func (a *App) Run(addr string) {
 	n.Use(negroni.NewRecovery())
 	n.UseHandler(a.Router)
 
-	a.Mattermost.Post("Server Starting")
-
+	log.Printf("Starting service on %s", addr)
 	log.Fatal(http.ListenAndServe(addr, n))
 }
 
