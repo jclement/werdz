@@ -8,6 +8,21 @@ import (
 	"time"
 )
 
+const (
+	// MaximumRounds is the upper limit on the number of rounds in a game
+	MaximumRounds = 10
+	// MinimumRounds is the lower limit on the number of rounds in a game
+	MinimumRounds = 1
+	// MaximumSubmissionDuration is the maximum duration (seconds) for the submission phase of a round
+	MaximumSubmissionDuration = 600
+	// MinimumSubmissionDuration is the minimum duration (seconds) for the submission phase of a round
+	MinimumSubmissionDuration = 60
+	// MinimumVotingDuration is the minimum duration (seconds) for the voting phase of a round
+	MinimumVotingDuration = 30
+	// MaximumVotingDuration is the maximum duration (seconds) for the voting phase of a round
+	MaximumVotingDuration = 300
+)
+
 // Mode represents the mode of a game
 type Mode int
 
@@ -58,10 +73,11 @@ const (
 
 // PlayerState represents the state of a player in the game
 type PlayerState struct {
-	ID      PlayerID
-	Name    string
-	Score   int
-	Deleted bool
+	ID       PlayerID
+	Name     string
+	Score    int
+	Inactive bool
+	Deleted  bool
 }
 
 // Definition represents a possible definition
@@ -83,73 +99,74 @@ type RoundData struct {
 
 // Game represents the state of an instance of a game
 type Game struct {
-	ID            GID
-	State         State
-	Mode          Mode
-	RoundDuration int
-	Players       []*PlayerState
-	MaxRounds     int
-	Rounds        []*RoundData
-	StartTime     time.Time
-	wordSource    func() (word, definition string)
+	ID                 GID
+	State              State
+	Mode               Mode
+	SubmissionDuration int
+	VotingDuration     int
+	Players            []*PlayerState
+	NumRounds          int
+	Rounds             []*RoundData
+	StartTime          time.Time
+	wordSource         func() (word, definition string)
+}
+
+func generateID(unambiguous bool, length int) string {
+	var letters []rune
+
+	if unambiguous {
+		letters = []rune("23456789ABCDEFGHJKMNPQRSTUVWXYZ")
+	} else {
+		letters = []rune("abcdefghijklmnopqrstuvwxyz123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	}
+
+	id := make([]rune, length)
+
+	for i := range id {
+		id[i] = letters[rand.Intn(len(letters))]
+	}
+
+	return string(id)
+
 }
 
 func generateGameID() GID {
-	letters := []rune("23456789ABCDEFGHJKMNPQRSTUVWXYZ")
-	id := make([]rune, 5)
-
-	for i := range id {
-		id[i] = letters[rand.Intn(len(letters))]
-	}
-
-	return GID(id)
+	return GID(generateID(true, 5))
 }
 
 func generateDefinitionID() DefinitionID {
-	letters := []rune("abcdefghijklmnopqrstuvwxyz123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-	id := make([]rune, 10)
-
-	for i := range id {
-		id[i] = letters[rand.Intn(len(letters))]
-	}
-
-	return DefinitionID(id)
+	return DefinitionID(generateID(false, 10))
 }
 
 func generateRoundID() RoundID {
-	letters := []rune("abcdefghijklmnopqrstuvwxyz123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-	id := make([]rune, 10)
-
-	for i := range id {
-		id[i] = letters[rand.Intn(len(letters))]
-	}
-
-	return RoundID(id)
+	return RoundID(generateID(false, 20))
 }
 
 // GeneratePlayerID generates a unique ID for a player
 func GeneratePlayerID() PlayerID {
-	letters := []rune("abcdefghijklmnopqrstuvwxyz123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-	id := make([]rune, 20)
-
-	for i := range id {
-		id[i] = letters[rand.Intn(len(letters))]
-	}
-
-	return PlayerID(id)
+	return PlayerID(generateID(false, 20))
 }
 
 // NewGame returns a new game instance
-func NewGame(wordSource func() (word, definition string), mode Mode, maxRounds int, roundDuration int) Game {
-	// bail on unreasonable maxRounds or roundDuration
-	return Game{
-		ID:            generateGameID(),
-		Mode:          mode,
-		MaxRounds:     maxRounds,
-		RoundDuration: roundDuration,
-		State:         StateNew,
-		wordSource:    wordSource,
+func NewGame(wordSource func() (word, definition string), mode Mode, numRounds int, submissionDuration int, votingDuration int) (*Game, error) {
+	if numRounds < MinimumRounds || numRounds > MaximumRounds {
+		return nil, fmt.Errorf("number of rounds must be between %d and %d", MinimumRounds, MaximumRounds)
 	}
+	if submissionDuration < MinimumSubmissionDuration || submissionDuration > MaximumSubmissionDuration {
+		return nil, fmt.Errorf("submission duration must be between %d and %d", MinimumSubmissionDuration, MaximumSubmissionDuration)
+	}
+	if votingDuration < MinimumVotingDuration || votingDuration > MaximumVotingDuration {
+		return nil, fmt.Errorf("voting duration must be between %d and %d", MinimumVotingDuration, MaximumVotingDuration)
+	}
+	return &Game{
+		ID:                 generateGameID(),
+		Mode:               mode,
+		NumRounds:          numRounds,
+		SubmissionDuration: submissionDuration,
+		VotingDuration:     votingDuration,
+		State:              StateNew,
+		wordSource:         wordSource,
+	}, nil
 }
 
 func (g *Game) findPlayer(id PlayerID) (index int, player *PlayerState, err error) {
@@ -176,13 +193,27 @@ func (g *Game) AddPlayer(id PlayerID, name string) error {
 	return nil
 }
 
-// RemovePlayer adds a player to the game
+// RemovePlayer removes a player to the game
+// Deleted players are considerd gone (but left for historical scorting purposes).
+// Deleted players are not able to take actions in a game
 func (g *Game) RemovePlayer(id PlayerID) error {
 	_, p, err := g.findPlayer(id)
 	if err != nil || p.Deleted {
 		return fmt.Errorf("player does not exist")
 	}
 	p.Deleted = true
+	return nil
+}
+
+// SetPlayerInactive gives a way to mark a player is inactive in the game.
+// This is mostly just a display thing and a way of shortening the voting / submission
+// process since we are waiting for the timer / all active players to vote.
+func (g *Game) SetPlayerInactive(id PlayerID, inactive bool) error {
+	_, p, err := g.findPlayer(id)
+	if err != nil || p.Deleted {
+		return fmt.Errorf("player does not exist")
+	}
+	p.Inactive = inactive
 	return nil
 }
 
@@ -224,22 +255,27 @@ func (g *Game) StartGame() error {
 	return nil
 }
 
+// Tick is the function expected to be called by the outside appliaction to handle the automatic
+// closing / scoring of rounds.
+func (g *Game) Tick() (round RoundID, state RoundState, secondsRemaining int, err error) {
+	r := g.CurrentRound()
+	return r.ID, r.State, 0, nil
+	// TODO: Fill this in!
+}
+
 // CurrentRound returns the current round
 func (g *Game) CurrentRound() *RoundData {
 	return g.Rounds[len(g.Rounds)-1]
 }
 
 // CloseSubmissionsForCurrentRound closes the round for new definions from players and starts voting
-func (g *Game) CloseSubmissionsForRound(round RoundID) error {
+func (g *Game) closeSubmissionsForCurrentRound() error {
 	if g.State != StateActive {
 		return fmt.Errorf("game is not active")
 	}
 	r := g.CurrentRound()
 	if r.State != RoundStateOpen {
 		return fmt.Errorf("round is not open")
-	}
-	if r.ID != round {
-		return fmt.Errorf("not the correct round")
 	}
 	g.CurrentRound().State = RoundStateVoting
 	return nil
@@ -265,20 +301,16 @@ func (g *Game) scoreRound() {
 }
 
 // CompleteCurrentRound closes voting on the current round and tallies up the scores
-func (g *Game) CompleteRound(round RoundID) error {
+func (g *Game) completeCurrentRound() error {
 	if g.State != StateActive {
 		return fmt.Errorf("game is not active")
 	}
 
 	r := g.CurrentRound()
-	if r.ID != round {
-		return fmt.Errorf("not the correct round")
-	}
-
 	r.State = RoundStateComplete
 	g.scoreRound()
 
-	if len(g.Rounds) < g.MaxRounds {
+	if len(g.Rounds) < g.NumRounds {
 		// if we aren't at maxRounds, spin up a new game
 		newRound := g.createNewRound()
 		g.Rounds = append(g.Rounds, newRound)

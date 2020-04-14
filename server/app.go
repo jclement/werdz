@@ -17,9 +17,7 @@ type App struct {
 
 // Initialize initializes up the application server
 func (a *App) Initialize() {
-
 	a.Router = mux.NewRouter()
-
 	a.initializeRoutes()
 }
 
