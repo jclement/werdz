@@ -1,35 +1,24 @@
 import React from 'react';
 import './App.css';
-import Button from 'react-bootstrap/Button';
-import axios from 'axios'
+import { Route } from 'react-router';
+import { Layout } from './components/Layout';
+import { Home } from './components/Home';
+import { About } from './components/About';
+import { Game } from './components/Game';
+import { BrowserRouter as Router } from 'react-router-dom'
 
 export class App extends React.Component<{}, any> {
-
-  constructor(props: any) {
-    super(props)
-    this.state = {
-      msg : "Nothing Here"
-    }
-
-    this.handleButton = this.handleButton.bind(this)
-  }
-
-  handleButton() {
-    axios.post("/api/test/", {
-      name: "World"
-    }).then((response) => {
-      this.setState({
-        msg: response.data.msg
-      })
-    })
-  }
-
   render() {
     return (
-      <div>
-        Message: <b>{this.state.msg}</b><br/>
-        <Button onClick={this.handleButton}>Test Button</Button>
-      </div>
+      <Router>
+        <Layout>
+          <Route exact path='/' component={Home} />
+          <Route path='/about' component={About} />
+          <Route path='/game/:id' render={({match}) => (
+            <Game id={match.params.id} />
+          )}/>
+        </Layout>
+      </Router>
     );
   }
 }
