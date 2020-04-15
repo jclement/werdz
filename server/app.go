@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -15,7 +16,9 @@ import (
 
 type gameState struct {
 	Game    *game.Game
+	Dirty   bool
 	Clients map[*websocket.Conn]game.PlayerID
+	Lock    sync.Mutex
 }
 
 // App represents an instance of the application server
@@ -52,50 +55,12 @@ func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, n))
 }
 
-func (a *App) wsHandler(w http.ResponseWriter, r *http.Request) {
-	upgrader := websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool {
-			return true
-		},
-	}
-	ws, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	ws.WriteJSON(struct{ Name string }{
-		Name: "Jeff",
-	})
-
-	vars := mux.Vars(r)
-	id := vars["id"]
-	player := vars["player"]
-
-	if g, ok := a.games[game.GID(id)]; ok {
-		g.Clients[ws] = game.PlayerID(player)
-	}
-
-}
-
 func (a *App) initializeRoutes() {
 	a.router.HandleFunc("/api/player/generate", a.apiPlayerGenerate).Methods("GET")
 
 	a.router.HandleFunc("/api/game/new", a.apiGameNew).Methods("POST")
 	a.router.HandleFunc("/api/game/{id}/start", a.apiGameStart).Methods("POST")
-	a.router.HandleFunc("/api/game/{id}/{player}/ws", a.wsHandler)
-}
-
-func (a *App) loop() {
-	for {
-		for _, g := range a.games {
-			for c := range g.Clients {
-				err := c.WriteMessage(websocket.TextMessage, []byte("ping"))
-				if err != nil {
-					c.Close()
-					delete(g.Clients, c)
-				}
-			}
-			// if g.clients == empty kill it and save to disk
-		}
-		time.Sleep(time.Second)
-	}
+	a.router.HandleFunc("/api/game/{id}/submit", a.apiGameSubmit).Methods("POST")
+	a.router.HandleFunc("/api/game/{id}/vote", a.apiGameVote).Methods("POST")
+	a.router.HandleFunc("/api/game/{id}/ws", a.apiGameWs)
 }

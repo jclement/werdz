@@ -14,14 +14,17 @@ func (a *App) apiGameStart(w http.ResponseWriter, r *http.Request) {
 
 	g, ok := a.games[game.GID(id)]
 	if !ok {
-		webservice.RespondWithError(w, http.StatusInternalServerError, "unable to find game")
+		webservice.RespondWithError(w, http.StatusNotFound, "unable to find game")
 		return
 	}
-	
+
+	g.Lock.Lock()
+	defer g.Lock.Unlock()
 	if err := g.Game.StartGame(); err != nil {
 		webservice.RespondWithError(w, http.StatusInternalServerError, "unable to start game")
 		return
 	}
+	g.Dirty =  rue
 
 	webservice.RespondWithJSON(w, http.StatusOK, nil)
 }

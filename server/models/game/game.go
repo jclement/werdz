@@ -180,6 +180,12 @@ func (g *Game) findPlayer(id PlayerID) (index int, player *PlayerState, err erro
 	return 0, nil, fmt.Errorf("player not found")
 }
 
+// PlayerExists returns whether a player is part of this game or not
+func (g *Game) PlayerExists(id PlayerID) bool {
+	_, _, err:=g.findPlayer(id)
+	return err == nil
+}
+
 // AddPlayer adds a player to the game
 func (g *Game) AddPlayer(id PlayerID, name string) error {
 	for _, p := range g.Players {
@@ -257,7 +263,7 @@ func (g *Game) StartGame() error {
 }
 
 // Tick is the function expected to be called by the outside appliaction to handle the automatic
-// closing / scoring of rounds.
+// closing / scoring of rounds.  Returns true if something interesting happened (round / phases ended)
 func (g *Game) Tick() (round RoundID, state RoundState, secondsRemaining int, err error) {
 
 	// if the game hasn't started... nothing interesting going on here

@@ -229,9 +229,15 @@ func TestAddingPlayers(t *testing.T) {
 	p1id := GeneratePlayerID()
 	p2id := GeneratePlayerID()
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 2, 600, 90)
+	if g.PlayerExists(p1id) {
+		t.Error("Player shouldn't exist here")
+	}
 	if err := g.AddPlayer(p1id, "Tester 1"); err != nil {
 		t.Error("Adding player should succeed here")
 		return
+	}
+	if !g.PlayerExists(p1id) {
+		t.Error("Player shouldn exist here")
 	}
 	if err := g.AddPlayer(p1id, "Tester 2"); err == nil {
 		t.Error("Adding player should fail here")
