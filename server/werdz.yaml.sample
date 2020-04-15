@@ -7,6 +7,9 @@
 ## Static Files Directory ##########################################
 #StaticDir: ./static/
 
+## word files directory ############################################
+#Words: ./data/words.json
+
 ## Mattermost Webhook ##############################################
 #WebhookURL: https://chat.zeos.ca/hooks/jo7q4788zirmjejkxt3cfeqdee
 #WebhookUser: Development Instance

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"time"
 
 	"github.com/spf13/viper"
@@ -14,6 +15,7 @@ func main() {
 
 	// Default configuration settings
 	viper.SetDefault("Listen", "localhost:8100")
+	viper.SetDefault("Words", "./data/words.json")
 
 	// Parse configuration files
 	viper.SetConfigName("werdz.yaml")
@@ -30,6 +32,14 @@ func main() {
 
 	a := App{}
 	a.Initialize()
+
+	// Load the word list
+	rdr, err := os.Open(viper.GetString("Words"))
+	if err != nil {
+		panic(err)
+	}
+	defer rdr.Close()
+	a.WordSet.Load(rdr)
 
 	a.SetMattermostWebhook(mattermost.New(
 		viper.GetString("WebhookURL"),
