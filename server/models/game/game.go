@@ -182,7 +182,7 @@ func (g *Game) findPlayer(id PlayerID) (index int, player *PlayerState, err erro
 
 // PlayerExists returns whether a player is part of this game or not
 func (g *Game) PlayerExists(id PlayerID) bool {
-	_, _, err:=g.findPlayer(id)
+	_, _, err := g.findPlayer(id)
 	return err == nil
 }
 
@@ -264,20 +264,22 @@ func (g *Game) StartGame() error {
 
 // Tick is the function expected to be called by the outside appliaction to handle the automatic
 // closing / scoring of rounds.  Returns true if something interesting happened (round / phases ended)
-func (g *Game) Tick() (round RoundID, state RoundState, secondsRemaining int, err error) {
+func (g *Game) Tick() bool {
 
 	// if the game hasn't started... nothing interesting going on here
 	if g.State == StateNew {
-		return RoundID(""), RoundStateComplete, 0, fmt.Errorf("game not started")
+		return false
 	}
 
 	r := g.CurrentRound()
+	somethingHappened := false
 
 	var rem int
 
 	if r.State == RoundStateOpen {
 		rem = g.SubmissionDuration - int(time.Since(r.RoundStartTime).Seconds())
 		if rem < 0 {
+			somethingHappened = true
 			g.closeSubmissionsForCurrentRound()
 		}
 	}
@@ -285,6 +287,7 @@ func (g *Game) Tick() (round RoundID, state RoundState, secondsRemaining int, er
 	if r.State == RoundStateVoting {
 		rem = g.VotingDuration - int(time.Since(r.VotingStartTime).Seconds())
 		if rem < 0 {
+			somethingHappened = true
 			g.completeCurrentRound()
 			if g.State != StateComplete {
 				rem = g.SubmissionDuration
@@ -293,7 +296,7 @@ func (g *Game) Tick() (round RoundID, state RoundState, secondsRemaining int, er
 		}
 	}
 
-	return r.ID, r.State, rem, nil
+	return somethingHappened
 }
 
 // CurrentRound returns the current round

@@ -494,24 +494,24 @@ func TestTick(t *testing.T) {
 	id1 := GeneratePlayerID()
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 2, 600, 90)
 	g.AddPlayer(id1, "tester")
-	if _, _, _, err := g.Tick(); err == nil {
-		t.Error("tick should fail because game isn't started")
+	if g.Tick() {
+		t.Error("nothing")
 		return
 	}
 	g.StartGame()
-	if _, state, rem, err := g.Tick(); err != nil || rem < 590 || state != RoundStateOpen {
-		t.Error("expected tick to do something")
+	if g.Tick() {
+		t.Error("nothing")
 		return
 	}
 	g.SubmitWord(id1, g.CurrentRound().ID, "test")
 	g.CurrentRound().RoundStartTime = time.Now().Add(time.Duration(-200 * time.Second))
-	if _, state, rem, err := g.Tick(); err != nil || rem < 390 || rem > 410 || state != RoundStateOpen {
-		t.Error("expected tick to do something")
+	if g.Tick() {
+		t.Error("nothing")
 		return
 	}
 	g.CurrentRound().RoundStartTime = time.Now().Add(time.Duration(-800 * time.Second))
-	if _, state, rem, err := g.Tick(); err != nil || rem != 90 || state != RoundStateVoting {
-		t.Error("expected tick to do something")
+	if !g.Tick() {
+		t.Error("something")
 		return
 	}
 	g.Vote(id1, g.CurrentRound().ID, g.CurrentRound().Definitions[0].ID)
@@ -520,9 +520,8 @@ func TestTick(t *testing.T) {
 		return
 	}
 	g.CurrentRound().VotingStartTime = time.Now().Add(time.Duration(-91 * time.Second))
-	if _, state, rem, err := g.Tick(); err != nil || rem != g.SubmissionDuration || state != RoundStateOpen {
-
-		t.Error("expected tick to do something")
+	if !g.Tick() {
+		t.Error("something")
 		return
 	}
 	if _, p, err := g.findPlayer(id1); err != nil || p.Score != 3 {

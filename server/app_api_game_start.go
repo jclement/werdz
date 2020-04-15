@@ -24,7 +24,7 @@ func (a *App) apiGameStart(w http.ResponseWriter, r *http.Request) {
 		webservice.RespondWithError(w, http.StatusInternalServerError, "unable to start game")
 		return
 	}
-	g.Dirty =  rue
+	g.Dirty =  true
 
 	webservice.RespondWithJSON(w, http.StatusOK, nil)
 }

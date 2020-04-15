@@ -33,11 +33,17 @@ func (a *App) apiGameWs(w http.ResponseWriter, r *http.Request) {
 		g.Lock.Lock()
 		defer g.Lock.Unlock()
 		g.Clients[ws] = game.PlayerID(id)
+		// join or re-join the game as necessary
 		if !g.Game.PlayerExists(playerID) {
 			g.Game.AddPlayer(playerID, name)
 		} else {
 			g.Game.SetPlayerInactive(playerID, true)
 		}
+		// give them the current state
+		m := newGameStateMessage(g.Game)
+		ws.WriteJSON(m)
+		// set game to dirty so everyone else gets an update
+		g.Dirty = true
 	}
 
 }

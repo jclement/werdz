@@ -7,10 +7,12 @@ import (
 )
 
 type gameStateMessage struct {
-	State     game.State `json:"state"`
-	Mode      game.Mode  `json:"mode"`
-	RoundID   string     `json:"mode"`
-	Remaining int        `json:"remaining"`
+	State       game.State `json:"state"`
+	Mode        game.Mode  `json:"mode"`
+	RoundID     string     `json:"mode"`
+	Remaining   int        `json:"remaining"`
+	Players     int        // TBD
+	Definitions int        // TBD
 }
 
 func newGameStateMessage(g *game.Game) gameStateMessage {
@@ -36,7 +38,8 @@ func newGameStateMessage(g *game.Game) gameStateMessage {
 func (a *App) loop() {
 	for {
 		for _, g := range a.games {
-			g.Game.Tick()
+			g.Dirty = g.Dirty || g.Game.Tick()
+			// if something has happened in this game, push an update
 			if g.Dirty {
 				m := newGameStateMessage(g.Game)
 				for c, p := range g.Clients {
@@ -49,6 +52,7 @@ func (a *App) loop() {
 						delete(g.Clients, c)
 					}
 				}
+				g.Dirty = false
 			}
 		}
 		time.Sleep(time.Second)
