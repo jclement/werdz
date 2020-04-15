@@ -2,7 +2,6 @@ package words
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"math/rand"
 )
