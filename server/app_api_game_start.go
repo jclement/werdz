@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -11,7 +10,6 @@ import (
 
 func (a *App) apiGameStart(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	fmt.Println(vars)
 	id := vars["id"]
 
 	g, ok := a.games[game.GID(id)]
