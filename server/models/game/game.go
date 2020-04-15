@@ -90,11 +90,12 @@ type Definition struct {
 
 // RoundData represents data collected during a round of the game
 type RoundData struct {
-	ID          RoundID
-	State       RoundState
-	Word        string
-	StartTime   time.Time
-	Definitions []*Definition
+	ID              RoundID
+	State           RoundState
+	Word            string
+	RoundStartTime  time.Time
+	VotingStartTime time.Time
+	Definitions     []*Definition
 }
 
 // Game represents the state of an instance of a game
@@ -221,10 +222,10 @@ func (g *Game) createNewRound() *RoundData {
 	word, def := g.wordSource()
 
 	r := RoundData{
-		ID:        generateRoundID(),
-		State:     RoundStateOpen,
-		Word:      word,
-		StartTime: time.Now(),
+		ID:             generateRoundID(),
+		State:          RoundStateOpen,
+		Word:           word,
+		RoundStartTime: time.Now(),
 	}
 
 	if g.Mode == ModeNormal {
@@ -258,9 +259,35 @@ func (g *Game) StartGame() error {
 // Tick is the function expected to be called by the outside appliaction to handle the automatic
 // closing / scoring of rounds.
 func (g *Game) Tick() (round RoundID, state RoundState, secondsRemaining int, err error) {
+
+	// if the game hasn't started... nothing interesting going on here
+	if g.State == StateNew {
+		return RoundID(""), RoundStateComplete, 0, fmt.Errorf("game not started")
+	}
+
 	r := g.CurrentRound()
-	return r.ID, r.State, 0, nil
-	// TODO: Fill this in!
+
+	var rem int
+
+	if r.State == RoundStateOpen {
+		rem = g.SubmissionDuration - int(time.Since(r.RoundStartTime).Seconds())
+		if rem < 0 {
+			g.closeSubmissionsForCurrentRound()
+		}
+	}
+
+	if r.State == RoundStateVoting {
+		rem = g.VotingDuration - int(time.Since(r.VotingStartTime).Seconds())
+		if rem < 0 {
+			g.completeCurrentRound()
+			if g.State != StateComplete {
+				rem = g.SubmissionDuration
+				r = g.CurrentRound()
+			}
+		}
+	}
+
+	return r.ID, r.State, rem, nil
 }
 
 // CurrentRound returns the current round
@@ -277,7 +304,8 @@ func (g *Game) closeSubmissionsForCurrentRound() error {
 	if r.State != RoundStateOpen {
 		return fmt.Errorf("round is not open")
 	}
-	g.CurrentRound().State = RoundStateVoting
+	r.State = RoundStateVoting
+	r.VotingStartTime = time.Now()
 	return nil
 }
 

@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestGameIDUnique(t *testing.T) {
@@ -481,4 +482,54 @@ func TestNewGames(t *testing.T) {
 		}
 
 	}
+}
+
+func TestTick(t *testing.T) {
+	id1 := GeneratePlayerID()
+	g, _ := NewGame(testableWordGenerator(), ModeNormal, 2, 600, 90)
+	g.AddPlayer(id1, "tester")
+	if _, _, _, err := g.Tick(); err == nil {
+		t.Error("tick should fail because game isn't started")
+		return
+	}
+	g.StartGame()
+	if _, state, rem, err := g.Tick(); err != nil || rem < 590 || state != RoundStateOpen {
+		t.Error("expected tick to do something")
+		return
+	}
+	g.SubmitWord(id1, g.CurrentRound().ID, "test")
+	g.CurrentRound().RoundStartTime = time.Now().Add(time.Duration(-200 * time.Second))
+	if _, state, rem, err := g.Tick(); err != nil || rem < 390 || rem > 410 || state != RoundStateOpen {
+		t.Error("expected tick to do something")
+		return
+	}
+	g.CurrentRound().RoundStartTime = time.Now().Add(time.Duration(-800 * time.Second))
+	if _, state, rem, err := g.Tick(); err != nil || rem != 90 || state != RoundStateVoting {
+		t.Error("expected tick to do something")
+		return
+	}
+	g.Vote(id1, g.CurrentRound().ID, g.CurrentRound().Definitions[0].ID)
+	if _, p, err := g.findPlayer(id1); err != nil || p.Score != 0 {
+		t.Error("unexpected player score")
+		return
+	}
+	g.CurrentRound().VotingStartTime = time.Now().Add(time.Duration(-91 * time.Second))
+	if _, state, rem, err := g.Tick(); err != nil || rem != g.SubmissionDuration || state != RoundStateOpen {
+
+		t.Error("expected tick to do something")
+		return
+	}
+	if _, p, err := g.findPlayer(id1); err != nil || p.Score != 3 {
+		t.Errorf("unexpected player score: %d", p.Score)
+		return
+	}
+	g.CurrentRound().RoundStartTime = time.Now().Add(time.Duration(-800 * time.Second))
+	g.Tick()
+	g.CurrentRound().VotingStartTime = time.Now().Add(time.Duration(-91 * time.Second))
+	g.Tick()
+	if g.State != StateComplete {
+		t.Error("unexpected game state")
+		return
+	}
+
 }
