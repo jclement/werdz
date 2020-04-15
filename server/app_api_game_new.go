@@ -8,9 +8,7 @@ import (
 )
 
 type apiGameNewRequest struct {
-	CreatorID   string `json:"creatorId"`
-	CreatorName string `json:"creatorName"`
-	Rounds      int    `json:"rounds"`
+	Rounds int `json:"rounds"`
 }
 
 type apiGameNewResponse struct {
@@ -27,7 +25,6 @@ func (a *App) apiGameNew(w http.ResponseWriter, r *http.Request) {
 		return w.Word, w.Definition
 	}
 	g, _ := game.NewGame(wordFunc, game.ModeNormal, payload.Rounds, 300, 90)
-	g.AddPlayer(game.PlayerID(payload.CreatorID), payload.CreatorName)
 
 	a.games[g.ID] = gameState{
 		Game: g,

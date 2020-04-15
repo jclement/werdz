@@ -32,6 +32,7 @@ type App struct {
 func (a *App) Initialize() {
 	a.router = mux.NewRouter()
 	a.initializeRoutes()
+	a.games = make(map[game.GID]gameState)
 }
 
 // SetMattermostWebhook sets a webhook for mattermost logging
