@@ -40,7 +40,7 @@ func (a *App) apiGameWs(w http.ResponseWriter, r *http.Request) {
 			g.Game.SetPlayerInactive(playerID, true)
 		}
 		// give them the current state
-		m := newGameStateMessage(g.Game)
+		m := newGameStateMessage(g.Game, playerID)
 		ws.WriteJSON(m)
 		// set game to dirty so everyone else gets an update
 		g.Dirty = true
