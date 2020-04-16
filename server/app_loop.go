@@ -9,18 +9,19 @@ import (
 )
 
 type gameStateMessage struct {
-	State       game.State           `json:"state"`
-	Mode        game.Mode            `json:"mode"`
-	RoundID     string               `json:"roundId"`
-	Round       int                  `json:"round"`
-	RoundState  game.RoundState      `json:"roundState"`
-	Word        string               `json:"word"`
-	Remaining   int                  `json:"remaining"`
-	Players     []*playerMessage     `json:"players"`
-	Definitions []*definitionMessage `json:"definitions"`
-	CanSubmit   bool                 `json:"canSubmit"`
-	CanVote     bool                 `json:"canVote"`
-	CanStart    bool                 `json:"canStart"`
+	State         game.State           `json:"state"`
+	Mode          game.Mode            `json:"mode"`
+	RoundID       string               `json:"roundId"`
+	Round         int                  `json:"round"`
+	RoundState    game.RoundState      `json:"roundState"`
+	Word          string               `json:"word"`
+	RemainingTime int                  `json:"remainingTime"`
+	TotalTime     int                  `json:"totalTime"`
+	Players       []*playerMessage     `json:"players"`
+	Definitions   []*definitionMessage `json:"definitions"`
+	CanSubmit     bool                 `json:"canSubmit"`
+	CanVote       bool                 `json:"canVote"`
+	CanStart      bool                 `json:"canStart"`
 }
 
 type definitionMessage struct {
@@ -53,7 +54,8 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 		m.RoundState = r.State
 		m.Word = r.Word
 		if r.State == game.RoundStateOpen {
-			m.Remaining = g.SubmissionDuration - int(time.Since(r.RoundStartTime).Seconds())
+			m.RemainingTime = g.SubmissionDuration - int(time.Since(r.RoundStartTime).Seconds())
+			m.TotalTime = g.SubmissionDuration
 			m.CanSubmit = true
 			for _, d := range r.Definitions {
 				if d.Player == targetPlayerID {
@@ -62,7 +64,8 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 			}
 		}
 		if r.State == game.RoundStateVoting {
-			m.Remaining = g.VotingDuration - int(time.Since(r.VotingStartTime).Seconds())
+			m.RemainingTime = g.VotingDuration - int(time.Since(r.VotingStartTime).Seconds())
+			m.TotalTime = g.VotingDuration
 			m.CanVote = true
 			for _, d := range r.Definitions {
 				dm := &definitionMessage{
@@ -82,7 +85,8 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 			}
 		}
 		if r.State == game.RoundStateVotingComplete {
-			m.Remaining = g.VotingCompleteDuration - int(time.Since(r.VotingCompleteStartTime).Seconds())
+			m.RemainingTime = g.VotingCompleteDuration - int(time.Since(r.VotingCompleteStartTime).Seconds())
+			m.TotalTime = g.VotingCompleteDuration
 			for _, d := range r.Definitions {
 				dm := &definitionMessage{
 					ID:         string(d.ID),
@@ -132,7 +136,7 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 		if g.Players[i].Score == g.Players[j].Score {
 			return strings.ToUpper(g.Players[i].Name) < strings.ToUpper(g.Players[j].Name)
 		}
-		return g.Players[i].Score < g.Players[j].Score
+		return g.Players[i].Score > g.Players[j].Score
 	})
 	return m
 }

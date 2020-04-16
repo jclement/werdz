@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
 import Websocket from 'react-websocket';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Axios from 'axios';
+import { Roster } from './Roster';
+import { GameStartButton } from './GameStartButton';
+import { GameHeader } from './GameHeader';
+import { GameSubmitForm } from './GameSubmitForm';
+import { GameVotingForm } from './GameVotingForm';
+import { GameRoundSummary } from './GameRoundSummary';
+import { GameScoreBoard } from './GameScoreBoard';
+import { GameTimer } from './GameTimer';
 
 interface GameProps {
   gameId: string,
@@ -11,7 +19,6 @@ interface GameProps {
 }
 
 export class Game extends Component<GameProps, any> {
-  ws: WebSocket | null = null;
 
   constructor(props: GameProps) {
     super(props)
@@ -54,7 +61,7 @@ export class Game extends Component<GameProps, any> {
     evt.preventDefault();
   }
 
-  vote(definitionId : string) {
+  vote(definitionId: string) {
     Axios.post("/api/game/" + this.props.gameId + "/vote", {
       playerId: this.props.playerId,
       roundId: this.state.gameState.roundId,
@@ -87,33 +94,28 @@ export class Game extends Component<GameProps, any> {
     return (
       <div>
         <Websocket url={ws_uri} onMessage={this.onMessage} />
-        <p>Game : {this.props.gameId} as {this.props.playerName}</p>
+
+        {this.state.gameState &&
+          <div>
+            <Row>
+              <Col>
+                <GameHeader gameId={this.props.gameId} gameState={this.state.gameState} />
+                {this.state.gameState.canStart && <GameStartButton gameId={this.props.gameId} />}
+                {this.state.gameState.canSubmit && <GameSubmitForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.roundId} />}
+                {this.state.gameState.canVote && <GameVotingForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.roundId} definitions={this.state.gameState.definitions} />}
+                {this.state.gameState.roundState === 2 && <GameRoundSummary playerId={this.props.playerId} gameState={this.state.gameState} />}
+                {this.state.gameState.state === 2 && <GameScoreBoard playerId={this.props.playerId} gameState={this.state.gameState} />}
+              </Col>
+              <Col>
+                <Roster players={this.state.gameState.players} playerId={this.props.playerId} />
+              </Col>
+            </Row>
+            <GameTimer remaining={this.state.gameState.remainingTime} total={this.state.gameState.totalTime} />
+          </div>
+        }
+
         <hr />
         <pre>{JSON.stringify(this.state.gameState, null, 2)}</pre>
-
-        {this.state.gameState && this.state.gameState.state === 0 && <Button onClick={this.startGame}>Start Game</Button>}
-
-        {this.state.gameState && this.state.gameState.canSubmit && (
-          <Form onSubmit={this.submit}>
-            <Form.Group controlId="def">
-              <Form.Label>Definition</Form.Label>
-              <Form.Control value={this.state.definition} onChange={this.onDefChange} type="text" placeholder="Enter definition" />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              Submit
-          </Button>
-          </Form>
-        )}
-
-        {this.state.gameState && this.state.gameState.canVote && (
-          <div>
-            {this.state.gameState.definitions.map((def: any) => {
-              return (<Button disabled={def.ownDefinition} key={def.id} onClick={() => {this.vote(def.id);}}>
-                {def.definition}
-              </Button>);
-            })}
-          </div>
-        )}
 
 
       </div>
