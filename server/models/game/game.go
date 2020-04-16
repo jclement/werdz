@@ -313,8 +313,20 @@ func (g *Game) closeSubmissionsForCurrentRound() error {
 	if r.State != RoundStateOpen {
 		return fmt.Errorf("round is not open")
 	}
+
+	// randomize the order of definitions
+	for i := range r.Definitions {
+		j := rand.Intn(i + 1)
+		r.Definitions[i], r.Definitions[j] = r.Definitions[j], r.Definitions[i]
+	}
+
 	r.State = RoundStateVoting
 	r.VotingStartTime = time.Now()
+
+	if len(r.Definitions) < 2 {
+		g.completeCurrentRound()
+	}
+
 	return nil
 }
 
@@ -383,6 +395,8 @@ func (g *Game) SubmitWord(player PlayerID, round RoundID, definition string) err
 		Player:     player,
 		Definition: definition,
 	})
+
+	// if this finishes the round...
 	return nil
 }
 

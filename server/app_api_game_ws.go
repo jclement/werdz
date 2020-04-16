@@ -36,7 +36,7 @@ func (a *App) apiGameWs(w http.ResponseWriter, r *http.Request) {
 
 	g.Lock.Lock()
 	defer g.Lock.Unlock()
-	g.Clients[ws] = game.PlayerID(id)
+	g.Clients[ws] = game.PlayerID(playerID)
 	// join or re-join the game as necessary
 	if !g.Game.PlayerExists(playerID) {
 		g.Game.AddPlayer(playerID, name)

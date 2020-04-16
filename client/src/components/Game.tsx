@@ -77,7 +77,7 @@ export class Game extends Component<GameProps, any> {
 
         { this.state.gameState && this.state.gameState.state === 0 && <Button onClick={this.startGame}>Start Game</Button>}
 
-        { this.state.gameState && this.state.gameState.state === 1 && (
+        { this.state.gameState && this.state.gameState.state === 1 && this.state.gameState.canSubmit && (
           <Form onSubmit={this.submit}>
           <Form.Group controlId="def">
             <Form.Label>Definition</Form.Label>

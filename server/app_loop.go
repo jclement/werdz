@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math/rand"
 	"sort"
 	"strings"
 	"time"
@@ -17,6 +16,8 @@ type gameStateMessage struct {
 	Remaining   int                 `json:"remaining"`
 	Players     []playerMessage     `json:"players"`
 	Definitions []definitionMessage `json:"definitions"`
+	CanSubmit   bool                `json:"canSubmit"`
+	CanVote     bool                `json:"canVote"`
 }
 
 type definitionMessage struct {
@@ -42,9 +43,16 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 		m.Word = r.Word
 		if r.State == game.RoundStateOpen {
 			m.Remaining = g.SubmissionDuration - int(time.Since(r.RoundStartTime).Seconds())
+			m.CanSubmit = true
+			for _, d := range r.Definitions {
+				if d.Player == targetPlayerID {
+					m.CanSubmit = false
+				}
+			}
 		}
 		if r.State == game.RoundStateVoting {
 			m.Remaining = g.VotingDuration - int(time.Since(r.VotingStartTime).Seconds())
+			m.CanVote = true
 			for _, d := range r.Definitions {
 				// don't give the player their own definition
 				if d.Player != targetPlayerID {
@@ -52,12 +60,12 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 						ID:         string(d.ID),
 						Definition: d.Definition,
 					})
+					for _, v := range d.Votes {
+						if v == targetPlayerID {
+							m.CanVote = false
+						}
+					}
 				}
-			}
-			// randomize the order of definitions
-			for i := range m.Definitions {
-				j := rand.Intn(i + 1)
-				m.Definitions[i], m.Definitions[j] = m.Definitions[j], m.Definitions[i]
 			}
 		}
 	}
@@ -86,7 +94,11 @@ func (a *App) loop() {
 		for _, g := range a.games {
 			g.Dirty = g.Dirty || g.Game.Tick()
 			// if something has happened in this game, push an update
+
+			/// ====== REMOVE BEFORE FLIGHT ==================================
 			g.Dirty = true
+			/// ====== /REMOVE BEFORE FLIGHT ==================================
+
 			if g.Dirty {
 				for c, p := range g.Clients {
 					m := newGameStateMessage(g.Game, p)
