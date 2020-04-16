@@ -24,7 +24,7 @@ type gameState struct {
 type App struct {
 	router  *mux.Router
 	webhook mattermost.Webhook
-	games   map[game.GID]gameState
+	games   map[game.GID]*gameState
 	WordSet words.WordSet
 }
 
@@ -32,7 +32,7 @@ type App struct {
 func (a *App) Initialize() {
 	a.router = mux.NewRouter()
 	a.initializeRoutes()
-	a.games = make(map[game.GID]gameState)
+	a.games = make(map[game.GID]*gameState)
 }
 
 // SetMattermostWebhook sets a webhook for mattermost logging

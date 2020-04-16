@@ -15,7 +15,7 @@ export class App extends React.Component<{}, any> {
           <Route exact path='/' component={Home} />
           <Route path='/about' component={About} />
           <Route path='/game/:id' render={({match}) => (
-            <Game id={match.params.id} />
+            <Game gameId={match.params.id} userId="123" name="Test" />
           )}/>
         </Layout>
       </Router>

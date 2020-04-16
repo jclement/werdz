@@ -12,7 +12,7 @@ import (
 type gameStateMessage struct {
 	State       game.State          `json:"state"`
 	Mode        game.Mode           `json:"mode"`
-	RoundID     string              `json:"mode"`
+	RoundID     string              `json:"roundId"`
 	Word        string              `json:"word"`
 	Remaining   int                 `json:"remaining"`
 	Players     []playerMessage     `json:"players"`
@@ -41,10 +41,10 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 		m.RoundID = string(r.ID)
 		m.Word = r.Word
 		if r.State == game.RoundStateOpen {
-			m.Remaining = int(time.Since(r.RoundStartTime).Seconds())
+			m.Remaining = g.SubmissionDuration - int(time.Since(r.RoundStartTime).Seconds())
 		}
 		if r.State == game.RoundStateVoting {
-			m.Remaining = int(time.Since(r.VotingStartTime).Seconds())
+			m.Remaining = g.VotingDuration - int(time.Since(r.VotingStartTime).Seconds())
 			for _, d := range r.Definitions {
 				// don't give the player their own definition
 				if d.Player != targetPlayerID {
@@ -54,7 +54,7 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 					})
 				}
 			}
-			// randomize the order of definitions 
+			// randomize the order of definitions
 			for i := range m.Definitions {
 				j := rand.Intn(i + 1)
 				m.Definitions[i], m.Definitions[j] = m.Definitions[j], m.Definitions[i]
@@ -86,6 +86,7 @@ func (a *App) loop() {
 		for _, g := range a.games {
 			g.Dirty = g.Dirty || g.Game.Tick()
 			// if something has happened in this game, push an update
+			g.Dirty = true
 			if g.Dirty {
 				for c, p := range g.Clients {
 					m := newGameStateMessage(g.Game, p)

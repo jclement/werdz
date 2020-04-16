@@ -9,8 +9,8 @@ import (
 )
 
 type apiGameSubmitRequest struct {
-	PlayerID   string `json:"roundId"`
-	RoundID    string `json:"roundId"`
+	PlayerID   string `json:"playerid"`
+	RoundID    string `json:"roundid"`
 	Definition string `json:"definition"`
 }
 
@@ -36,7 +36,7 @@ func (a *App) apiGameSubmit(w http.ResponseWriter, r *http.Request) {
 	if err := g.Game.SubmitWord(playerID, roundID, payload.Definition); err != nil {
 		webservice.RespondWithError(w, http.StatusInternalServerError, err.Error())
 	}
-	g.Dirty =  true
+	g.Dirty = true
 
 	webservice.RespondWithJSON(w, http.StatusOK, nil)
 }

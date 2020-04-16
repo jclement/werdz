@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/gorilla/websocket"
 	"gitlab.adipose.net/jeff/werdz/models/game"
 	"gitlab.adipose.net/jeff/werdz/util/webservice"
 )
@@ -26,8 +27,9 @@ func (a *App) apiGameNew(w http.ResponseWriter, r *http.Request) {
 	}
 	g, _ := game.NewGame(wordFunc, game.ModeNormal, payload.Rounds, 300, 90)
 
-	a.games[g.ID] = gameState{
-		Game: g,
+	a.games[g.ID] = &gameState{
+		Game:    g,
+		Clients: make(map[*websocket.Conn]game.PlayerID),
 	}
 
 	webservice.RespondWithJSON(w, http.StatusOK, apiGameNewResponse{ID: string(g.ID)})
