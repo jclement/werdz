@@ -24,9 +24,11 @@ type gameStateMessage struct {
 }
 
 type definitionMessage struct {
-	ID            string `json:"id"`
-	Definition    string `json:"definition"`
-	OwnDefinition bool   `json:"ownDefinition"`
+	ID            string   `json:"id"`
+	Definition    string   `json:"definition"`
+	OwnDefinition bool     `json:"ownDefinition"`
+	Player        string   `json:"player"`
+	Votes         []string `json:"votes"`
 }
 
 type playerMessage struct {
@@ -89,6 +91,10 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 				if d.Player == targetPlayerID {
 					dm.OwnDefinition = true
 				}
+				for _, v := range d.Votes {
+					dm.Votes = append(dm.Votes, string(v))
+				}
+				dm.Player = string(d.Player)
 				m.Definitions = append(m.Definitions, dm)
 			}
 		}
