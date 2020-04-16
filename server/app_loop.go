@@ -119,31 +119,38 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 	return m
 }
 
-func (a *App) loop() {
+func (a *App) gameLoop(g *gameState) {
 	for {
-		for _, g := range a.games {
-			g.Dirty = g.Dirty || g.Game.Tick()
-			// if something has happened in this game, push an update
 
-			/// ====== REMOVE BEFORE FLIGHT ==================================
-			g.Dirty = true
-			/// ====== /REMOVE BEFORE FLIGHT ==================================
+		// Wait for something to happen
+		<-g.broadcastChan
 
-			if g.Dirty {
-				for c, p := range g.Clients {
-					m := newGameStateMessage(g.Game, p)
-					err := c.WriteJSON(m)
-					if err != nil {
-						g.Lock.Lock()
-						g.Game.SetPlayerInactive(p, true)
-						g.Lock.Unlock()
-						c.Close()
-						delete(g.Clients, c)
-					}
-				}
-				g.Dirty = false
+		// TODO: probably need some smarter locking around the reads to the message without
+		// locking on sends
+		for c, p := range g.Clients {
+			m := newGameStateMessage(g.Game, p)
+			err := c.WriteJSON(m)
+			if err != nil {
+				g.lock.Lock()
+				g.Game.SetPlayerInactive(p, true)
+				g.lock.Unlock()
+				c.Close()
+				delete(g.Clients, c)
 			}
 		}
-		time.Sleep(time.Second)
+
+		// kill the loop for this game if it's complete
+		if g.Game.State == game.StateComplete {
+			//return
+		}
+	}
+}
+
+func (a *App) debugLoop() {
+	for {
+		for _, g := range a.games {
+			g.PushUpdate()
+		}
+		time.Sleep(2 * time.Second)
 	}
 }

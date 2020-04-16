@@ -18,13 +18,14 @@ func (a *App) apiGameStart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	g.Lock.Lock()
-	defer g.Lock.Unlock()
+	g.lock.Lock()
+	defer g.lock.Unlock()
 	if err := g.Game.StartGame(); err != nil {
 		webservice.RespondWithError(w, http.StatusInternalServerError, "unable to start game")
 		return
 	}
-	g.Dirty =  true
+
+	g.PushUpdate()
 
 	webservice.RespondWithJSON(w, http.StatusOK, nil)
 }

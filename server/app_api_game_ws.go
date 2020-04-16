@@ -24,6 +24,18 @@ func (a *App) apiGameWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	playerID := game.PlayerID(r.URL.Query().Get("playerid"))
+	if len(playerID) == 0 {
+		webservice.RespondWithError(w, http.StatusNotFound, "playerid required")
+		return
+	}
+
+	name := r.URL.Query().Get("name")
+	if len(name) == 0 {
+		webservice.RespondWithError(w, http.StatusNotFound, "name required")
+		return
+	}
+
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -31,11 +43,8 @@ func (a *App) apiGameWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerID := game.PlayerID(r.URL.Query().Get("playerid"))
-	name := r.URL.Query().Get("name")
-
-	g.Lock.Lock()
-	defer g.Lock.Unlock()
+	g.lock.Lock()
+	defer g.lock.Unlock()
 	g.Clients[ws] = game.PlayerID(playerID)
 	// join or re-join the game as necessary
 	if !g.Game.PlayerExists(playerID) {
@@ -46,6 +55,7 @@ func (a *App) apiGameWs(w http.ResponseWriter, r *http.Request) {
 	// give them the current state
 	m := newGameStateMessage(g.Game, playerID)
 	ws.WriteJSON(m)
-	// set game to dirty so everyone else gets an update
-	g.Dirty = true
+
+	// let the world know we have a new player
+	g.PushUpdate()
 }

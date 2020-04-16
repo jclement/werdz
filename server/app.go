@@ -14,10 +14,16 @@ import (
 )
 
 type gameState struct {
-	Game    *game.Game
-	Dirty   bool
-	Clients map[*websocket.Conn]game.PlayerID
-	Lock    sync.Mutex
+	Game          *game.Game
+	Clients       map[*websocket.Conn]game.PlayerID
+	lock          sync.Mutex
+	broadcastChan chan bool
+}
+
+func (g *gameState) PushUpdate() {
+	go func() {
+		g.broadcastChan <- true
+	}()
 }
 
 // App represents an instance of the application server
@@ -50,7 +56,9 @@ func (a *App) Run(addr string) {
 
 	log.Printf("Starting service on %s", addr)
 
-	go a.loop()
+	// ======= REMOVE BEFORE FLIGHT ==============================
+	go a.debugLoop()
+	// ======= /REMOVE BEFORE FLIGHT ==============================
 
 	log.Fatal(http.ListenAndServe(addr, n))
 }
@@ -63,4 +71,11 @@ func (a *App) initializeRoutes() {
 	a.router.HandleFunc("/api/game/{id}/submit", a.apiGameSubmit).Methods("POST")
 	a.router.HandleFunc("/api/game/{id}/vote", a.apiGameVote).Methods("POST")
 	a.router.HandleFunc("/api/game/{id}/ws", a.apiGameWs)
+}
+
+func (a *App) getGame(id game.GID) (*gameState, bool) {
+	if g, ok := a.games[id]; ok {
+		return g, true
+	}
+	return nil, false
 }

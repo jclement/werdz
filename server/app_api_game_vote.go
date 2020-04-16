@@ -32,12 +32,13 @@ func (a *App) apiGameVote(w http.ResponseWriter, r *http.Request) {
 		webservice.RespondWithError(w, http.StatusNotFound, "game does not exist")
 	}
 
-	g.Lock.Lock()
-	defer g.Lock.Unlock()
+	g.lock.Lock()
+	defer g.lock.Unlock()
 	if err := g.Game.Vote(playerID, roundID, definitionID); err != nil {
 		webservice.RespondWithError(w, http.StatusInternalServerError, err.Error())
 	}
-	g.Dirty = true
+
+	g.PushUpdate()
 
 	webservice.RespondWithJSON(w, http.StatusOK, nil)
 }

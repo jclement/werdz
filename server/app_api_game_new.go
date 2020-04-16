@@ -27,10 +27,14 @@ func (a *App) apiGameNew(w http.ResponseWriter, r *http.Request) {
 	}
 	g, _ := game.NewGame(wordFunc, game.ModeNormal, payload.Rounds, 300, 90)
 
-	a.games[g.ID] = &gameState{
-		Game:    g,
-		Clients: make(map[*websocket.Conn]game.PlayerID),
+	newGame := &gameState{
+		Game:      g,
+		Clients:   make(map[*websocket.Conn]game.PlayerID),
+		broadcastChan: make(chan bool),
 	}
+
+	a.games[g.ID] = newGame
+	go a.gameLoop(newGame)
 
 	webservice.RespondWithJSON(w, http.StatusOK, apiGameNewResponse{ID: string(g.ID)})
 }

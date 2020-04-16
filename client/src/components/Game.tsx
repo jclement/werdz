@@ -104,7 +104,7 @@ export class Game extends Component<GameProps, any> {
         {this.state.gameState && this.state.gameState.canVote && (
           <div>
             {this.state.gameState.definitions.map((def: any) => {
-              return (<Button key={def.id} onClick={() => {this.vote(def.id);}}>
+              return (<Button disabled={def.ownDefinition} key={def.id} onClick={() => {this.vote(def.id);}}>
                 {def.definition}
               </Button>);
             })}

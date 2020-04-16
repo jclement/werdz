@@ -402,7 +402,6 @@ func (g *Game) SubmitWord(player PlayerID, round RoundID, definition string) err
 	})
 
 	activePlayers := g.activePlayers()
-	fmt.Println(activePlayers)
 	if len(activePlayers) != 0 {
 		anyMissingDefs := false
 		defTmp := make(map[PlayerID]bool)
