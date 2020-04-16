@@ -152,10 +152,6 @@ func TestCloseSubmissionsForCurrentRound(t *testing.T) {
 	p2id := GeneratePlayerID()
 	g.AddPlayer(p1id, "Tester 1")
 	g.AddPlayer(p2id, "Tester 2")
-	if err := g.closeSubmissionsForCurrentRound(); err == nil {
-		t.Error("Can't close submissions on an inactive game")
-		return
-	}
 	g.StartGame()
 	if err := g.SubmitWord(p1id, g.CurrentRound().ID, "oops"); err != nil {
 		t.Error("this should work")
@@ -178,10 +174,6 @@ func TestCloseSubmissionsForCurrentRound(t *testing.T) {
 func TestCloseSubmissionsForCurrentRoundNoVotes(t *testing.T) {
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 3, 600, 90)
 	g.AddPlayer(GeneratePlayerID(), "Tester")
-	if err := g.closeSubmissionsForCurrentRound(); err == nil {
-		t.Error("Can't close submissions on an inactive game")
-		return
-	}
 	g.StartGame()
 	if err := g.closeSubmissionsForCurrentRound(); err != nil {
 		t.Error("Should have been able to close a new round")
@@ -200,10 +192,6 @@ func TestCloseSubmissionsForCurrentRoundNoVotes(t *testing.T) {
 func TestCompleteCurrentRoundBeforeVoting(t *testing.T) {
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 3, 600, 90)
 	g.AddPlayer(GeneratePlayerID(), "Tester")
-	if err := g.completeCurrentRound(); err == nil {
-		t.Error("Can't complete a round on an inactive game")
-		return
-	}
 	g.StartGame()
 	if err := g.completeCurrentRound(); err != nil {
 		t.Error("Should have been able to close a new round")
@@ -222,10 +210,6 @@ func TestCompleteCurrentRoundBeforeVoting(t *testing.T) {
 func TestCompleteCurrentRoundAfterVoting(t *testing.T) {
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 3, 600, 90)
 	g.AddPlayer(GeneratePlayerID(), "Tester")
-	if err := g.completeCurrentRound(); err == nil {
-		t.Error("Can't complete a round on an inactive game")
-		return
-	}
 	g.StartGame()
 	// add some votes in here for scoring
 	if err := g.closeSubmissionsForCurrentRound(); err != nil {
@@ -574,16 +558,25 @@ func TestTick(t *testing.T) {
 		t.Error("something")
 		return
 	}
+	if g.CurrentRound().State != RoundStateVotingComplete {
+		t.Error("unexpected round state")
+		return
+	}
 	if _, p, err := g.findPlayer(id1); err != nil || p.Score != 3 {
 		t.Errorf("unexpected player score: %d", p.Score)
 		return
 	}
+	g.CurrentRound().VotingCompleteStartTime = time.Now().Add(-1 * time.Duration(2+g.VotingCompleteDuration) * time.Second)
+	g.Tick()
+
 	g.CurrentRound().RoundStartTime = time.Now().Add(time.Duration(-800 * time.Second))
 	g.Tick()
 	g.CurrentRound().VotingStartTime = time.Now().Add(time.Duration(-91 * time.Second))
 	g.Tick()
+	g.CurrentRound().VotingCompleteStartTime = time.Now().Add(-1 * time.Duration(2+g.VotingCompleteDuration) * time.Second)
+	g.Tick()
 	if g.State != StateComplete {
-		t.Error("unexpected game state")
+		t.Error("invalid game state")
 		return
 	}
 

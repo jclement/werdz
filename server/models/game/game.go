@@ -366,9 +366,6 @@ func (g *Game) scoreRound() {
 
 func (g *Game) closeVotingForCurrentRound() error {
 	r := g.CurrentRound()
-	if r.State != RoundStateVoting {
-		return fmt.Errorf("round is not voting")
-	}
 	r.State = RoundStateVotingComplete
 	r.VotingCompleteStartTime = time.Now()
 	g.scoreRound()
@@ -505,10 +502,7 @@ func (g *Game) EndGame() error {
 
 	if g.State == StateActive {
 		r := g.CurrentRound()
-		if r.State != RoundStateComplete {
-			r.State = RoundStateComplete
-			g.scoreRound()
-		}
+		r.State = RoundStateComplete
 	}
 
 	g.State = StateComplete
