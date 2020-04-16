@@ -9,37 +9,45 @@ import (
 )
 
 type gameStateMessage struct {
-	State       game.State          `json:"state"`
-	Mode        game.Mode           `json:"mode"`
-	RoundID     string              `json:"roundId"`
-	Word        string              `json:"word"`
-	Remaining   int                 `json:"remaining"`
-	Players     []playerMessage     `json:"players"`
-	Definitions []definitionMessage `json:"definitions"`
-	CanSubmit   bool                `json:"canSubmit"`
-	CanVote     bool                `json:"canVote"`
+	State       game.State           `json:"state"`
+	Mode        game.Mode            `json:"mode"`
+	RoundID     string               `json:"roundId"`
+	Round       int                  `json:"round"`
+	RoundState  game.RoundState      `json:"roundState"`
+	Word        string               `json:"word"`
+	Remaining   int                  `json:"remaining"`
+	Players     []*playerMessage     `json:"players"`
+	Definitions []*definitionMessage `json:"definitions"`
+	CanSubmit   bool                 `json:"canSubmit"`
+	CanVote     bool                 `json:"canVote"`
+	CanStart    bool                 `json:"canStart"`
 }
 
 type definitionMessage struct {
 	ID         string `json:"id"`
-	Definition string `json:"definition`
+	Definition string `json:"definition"`
 }
 
 type playerMessage struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Score int    `json:"score"`
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	Score     int    `json:"score"`
+	Voted     bool   `json:"voted"`
+	Submitted bool   `json:"submitted"`
 }
 
 func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMessage {
 	m := gameStateMessage{
-		State: g.State,
-		Mode:  g.Mode,
+		State:    g.State,
+		Mode:     g.Mode,
+		CanStart: g.CanStartGame(),
 	}
 
 	if g.State != game.StateNew {
 		r := g.CurrentRound()
+		m.Round = len(g.Rounds)
 		m.RoundID = string(r.ID)
+		m.RoundState = r.State
 		m.Word = r.Word
 		if r.State == game.RoundStateOpen {
 			m.Remaining = g.SubmissionDuration - int(time.Since(r.RoundStartTime).Seconds())
@@ -56,7 +64,7 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 			for _, d := range r.Definitions {
 				// don't give the player their own definition
 				if d.Player != targetPlayerID {
-					m.Definitions = append(m.Definitions, definitionMessage{
+					m.Definitions = append(m.Definitions, &definitionMessage{
 						ID:         string(d.ID),
 						Definition: d.Definition,
 					})
@@ -70,13 +78,31 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 		}
 	}
 
+	voted := make(map[game.PlayerID]bool)
+	submitted := make(map[game.PlayerID]bool)
+
+	if g.State != game.StateNew {
+		for _, d := range g.CurrentRound().Definitions {
+			submitted[d.Player] = true
+			for _, v := range d.Votes {
+				voted[v] = true
+			}
+		}
+	}
+
 	for _, p := range g.Players {
-		m.Players = append(m.Players, playerMessage{
+		msg := playerMessage{
 			ID:    string(p.ID),
 			Name:  p.Name,
 			Score: p.Score,
-		})
-
+		}
+		if _, ok := voted[p.ID]; ok {
+			msg.Voted = true
+		}
+		if _, ok := submitted[p.ID]; ok {
+			msg.Submitted = true
+		}
+		m.Players = append(m.Players, &msg)
 	}
 
 	// sort the players by score and then by name

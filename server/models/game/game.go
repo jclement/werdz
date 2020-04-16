@@ -180,6 +180,11 @@ func (g *Game) findPlayer(id PlayerID) (index int, player *PlayerState, err erro
 	return 0, nil, fmt.Errorf("player not found")
 }
 
+// CanStartGame indicates if this game can start
+func (g *Game) CanStartGame() bool {
+	return g.State == StateNew && len(g.activePlayers()) > 0
+}
+
 // PlayerExists returns whether a player is part of this game or not
 func (g *Game) PlayerExists(id PlayerID) bool {
 	_, _, err := g.findPlayer(id)
@@ -396,6 +401,24 @@ func (g *Game) SubmitWord(player PlayerID, round RoundID, definition string) err
 		Definition: definition,
 	})
 
+	activePlayers := g.activePlayers()
+	fmt.Println(activePlayers)
+	if len(activePlayers) != 0 {
+		anyMissingDefs := false
+		defTmp := make(map[PlayerID]bool)
+		for _, d := range r.Definitions {
+			defTmp[d.Player] = true
+		}
+		for _, p := range activePlayers {
+			if _, ok := defTmp[p.ID]; !ok {
+				anyMissingDefs = true
+			}
+		}
+		if !anyMissingDefs {
+			g.closeSubmissionsForCurrentRound()
+		}
+	}
+
 	// if this finishes the round...
 	return nil
 }
@@ -430,7 +453,35 @@ func (g *Game) Vote(player PlayerID, round RoundID, definition DefinitionID) err
 			def.Votes = append(def.Votes, player)
 		}
 	}
+	activePlayers := g.activePlayers()
+	if len(activePlayers) != 0 {
+		anyMissingVotes := false
+		voteTmp := make(map[PlayerID]bool)
+		for _, d := range r.Definitions {
+			for _, v := range d.Votes {
+				voteTmp[v] = true
+			}
+		}
+		for _, p := range activePlayers {
+			if _, ok := voteTmp[p.ID]; !ok {
+				anyMissingVotes = true
+			}
+		}
+		if !anyMissingVotes {
+			g.completeCurrentRound()
+		}
+	}
 	return nil
+}
+
+func (g *Game) activePlayers() []*PlayerState {
+	out := make([]*PlayerState, 0, len(g.Players))
+	for _, p := range g.Players {
+		if !p.Inactive {
+			out = append(out, p)
+		}
+	}
+	return out
 }
 
 // EndGame sets a game status to complete

@@ -9,8 +9,8 @@ import (
 )
 
 type apiGameSubmitRequest struct {
-	PlayerID   string `json:"playerid"`
-	RoundID    string `json:"roundid"`
+	PlayerID   string `json:"playerId"`
+	RoundID    string `json:"roundId"`
 	Definition string `json:"definition"`
 }
 

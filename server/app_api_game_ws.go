@@ -41,7 +41,7 @@ func (a *App) apiGameWs(w http.ResponseWriter, r *http.Request) {
 	if !g.Game.PlayerExists(playerID) {
 		g.Game.AddPlayer(playerID, name)
 	} else {
-		g.Game.SetPlayerInactive(playerID, true)
+		g.Game.SetPlayerInactive(playerID, false)
 	}
 	// give them the current state
 	m := newGameStateMessage(g.Game, playerID)

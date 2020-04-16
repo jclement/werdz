@@ -9,7 +9,7 @@ import (
 )
 
 type apiGameVoteRequest struct {
-	PlayerID     string `json:"roundId"`
+	PlayerID     string `json:"playerId"`
 	RoundID      string `json:"roundId"`
 	DefinitionID string `json:"definitionId"`
 }
@@ -37,7 +37,7 @@ func (a *App) apiGameVote(w http.ResponseWriter, r *http.Request) {
 	if err := g.Game.Vote(playerID, roundID, definitionID); err != nil {
 		webservice.RespondWithError(w, http.StatusInternalServerError, err.Error())
 	}
-	g.Dirty =  true
+	g.Dirty = true
 
 	webservice.RespondWithJSON(w, http.StatusOK, nil)
 }

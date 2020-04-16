@@ -139,12 +139,14 @@ func TestCreateNewRoundFun(t *testing.T) {
 
 func TestCloseSubmissionsForCurrentRound(t *testing.T) {
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 3, 600, 90)
-	g.AddPlayer(GeneratePlayerID(), "Tester")
+	pid := GeneratePlayerID()
+	g.AddPlayer(pid, "Tester")
 	if err := g.closeSubmissionsForCurrentRound(); err == nil {
 		t.Error("Can't close submissions on an inactive game")
 		return
 	}
 	g.StartGame()
+	g.SubmitWord(pid, g.CurrentRound().ID, "oops")
 	if err := g.closeSubmissionsForCurrentRound(); err != nil {
 		t.Error("Should have been able to close a new round")
 		return
@@ -155,6 +157,28 @@ func TestCloseSubmissionsForCurrentRound(t *testing.T) {
 	}
 	if err := g.closeSubmissionsForCurrentRound(); err == nil {
 		t.Error("Should have been able to close a voting round")
+		return
+	}
+}
+
+func TestCloseSubmissionsForCurrentRoundNoVotes(t *testing.T) {
+	g, _ := NewGame(testableWordGenerator(), ModeNormal, 3, 600, 90)
+	g.AddPlayer(GeneratePlayerID(), "Tester")
+	if err := g.closeSubmissionsForCurrentRound(); err == nil {
+		t.Error("Can't close submissions on an inactive game")
+		return
+	}
+	g.StartGame()
+	if err := g.closeSubmissionsForCurrentRound(); err != nil {
+		t.Error("Should have been able to close a new round")
+		return
+	}
+	if g.Rounds[0].State != RoundStateComplete {
+		t.Error("Round should be closed")
+		return
+	}
+	if len(g.Rounds) != 2 {
+		t.Error("Should be on round 2 now")
 		return
 	}
 }
@@ -398,9 +422,20 @@ func TestVoting(t *testing.T) {
 	}
 	g.closeSubmissionsForCurrentRound()
 
-	defCorrect := g.CurrentRound().Definitions[0].ID
-	def1 := g.CurrentRound().Definitions[1]
-	def2 := g.CurrentRound().Definitions[2]
+	var defCorrect *Definition
+	var def1 *Definition
+	var def2 *Definition
+	for _, d := range g.CurrentRound().Definitions {
+		if d.Player == rightAnswerPlayerID {
+			defCorrect = d
+		}
+		if d.Player == id1 {
+			def1 = d
+		}
+		if d.Player == id2 {
+			def2 = d
+		}
+	}
 
 	t.Log("def1", id1, def1)
 	t.Log("def2", id2, def2)
@@ -420,10 +455,10 @@ func TestVoting(t *testing.T) {
 	if err := g.Vote(id1, roundID, def2.ID); err == nil {
 		t.Error("Can't vote twice")
 	}
-	if err := g.Vote(id1, roundID, defCorrect); err == nil {
+	if err := g.Vote(id1, roundID, defCorrect.ID); err == nil {
 		t.Error("Can't vote twice")
 	}
-	if err := g.Vote(id2, roundID, defCorrect); err != nil {
+	if err := g.Vote(id2, roundID, defCorrect.ID); err != nil {
 		t.Error("Should have worked")
 	}
 	g.completeCurrentRound()

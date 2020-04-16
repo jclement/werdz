@@ -6,8 +6,8 @@ import Axios from 'axios';
 
 interface GameProps {
   gameId: string,
-  userId: string,
-  name: string,
+  playerId: string,
+  playerName: string,
 }
 
 export class Game extends Component<GameProps, any> {
@@ -24,12 +24,12 @@ export class Game extends Component<GameProps, any> {
     this.onMessage = this.onMessage.bind(this)
     this.startGame = this.startGame.bind(this)
     this.submit = this.submit.bind(this)
+    this.vote = this.vote.bind(this)
     this.onDefChange = this.onDefChange.bind(this)
   }
 
   onMessage(msg: any) {
     msg = JSON.parse(msg)
-    console.log(msg)
     this.setState({
       gameState: msg
     })
@@ -40,15 +40,27 @@ export class Game extends Component<GameProps, any> {
     }).then(() => {
     })
   }
-  
+
   submit(evt: any) {
     Axios.post("/api/game/" + this.props.gameId + "/submit", {
-      playerid: this.props.userId,
-      roundid: this.state.gameState.roundId,
+      playerId: this.props.playerId,
+      roundId: this.state.gameState.roundId,
       definition: this.state.definition,
     }).then(() => {
+      this.setState({
+        definition: ""
+      })
     })
     evt.preventDefault();
+  }
+
+  vote(definitionId : string) {
+    Axios.post("/api/game/" + this.props.gameId + "/vote", {
+      playerId: this.props.playerId,
+      roundId: this.state.gameState.roundId,
+      definitionId: definitionId,
+    }).then(() => {
+    })
   }
 
   onDefChange(evt: any) {
@@ -66,7 +78,7 @@ export class Game extends Component<GameProps, any> {
       ws_uri = "ws:";
     }
     ws_uri += "//" + loc.host;
-    ws_uri += "/api/game/" + this.props.gameId + "/ws?name=" + encodeURIComponent(this.props.name) + "&playerid=" + encodeURIComponent(this.props.userId);
+    ws_uri += "/api/game/" + this.props.gameId + "/ws?name=" + encodeURIComponent(this.props.playerName) + "&playerid=" + encodeURIComponent(this.props.playerId);
 
     return (
       <div>
@@ -75,18 +87,28 @@ export class Game extends Component<GameProps, any> {
         <hr />
         <pre>{JSON.stringify(this.state.gameState, null, 2)}</pre>
 
-        { this.state.gameState && this.state.gameState.state === 0 && <Button onClick={this.startGame}>Start Game</Button>}
+        {this.state.gameState && this.state.gameState.state === 0 && <Button onClick={this.startGame}>Start Game</Button>}
 
-        { this.state.gameState && this.state.gameState.state === 1 && this.state.gameState.canSubmit && (
+        {this.state.gameState && this.state.gameState.canSubmit && (
           <Form onSubmit={this.submit}>
-          <Form.Group controlId="def">
-            <Form.Label>Definition</Form.Label>
-            <Form.Control value={this.state.definition} onChange={this.onDefChange} type="text" placeholder="Enter definition" />
-          </Form.Group>
-          <Button variant="primary" type="submit">
-            Submit
+            <Form.Group controlId="def">
+              <Form.Label>Definition</Form.Label>
+              <Form.Control value={this.state.definition} onChange={this.onDefChange} type="text" placeholder="Enter definition" />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Submit
           </Button>
-        </Form>
+          </Form>
+        )}
+
+        {this.state.gameState && this.state.gameState.canVote && (
+          <div>
+            {this.state.gameState.definitions.map((def: any) => {
+              return (<Button key={def.id} onClick={() => {this.vote(def.id);}}>
+                {def.definition}
+              </Button>);
+            })}
+          </div>
         )}
 
 
