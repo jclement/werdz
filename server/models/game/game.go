@@ -67,6 +67,8 @@ const (
 	RoundStateOpen RoundState = iota
 	// RoundStateVoting for a round that is open for voting
 	RoundStateVoting
+	// RoundStateVotingComplete for a round that is voting complete
+	RoundStateVotingComplete
 	// RoundStateComplete for a completed round
 	RoundStateComplete
 )
@@ -90,26 +92,28 @@ type Definition struct {
 
 // RoundData represents data collected during a round of the game
 type RoundData struct {
-	ID              RoundID
-	State           RoundState
-	Word            string
-	RoundStartTime  time.Time
-	VotingStartTime time.Time
-	Definitions     []*Definition
+	ID                      RoundID
+	State                   RoundState
+	Word                    string
+	RoundStartTime          time.Time
+	VotingStartTime         time.Time
+	VotingCompleteStartTime time.Time
+	Definitions             []*Definition
 }
 
 // Game represents the state of an instance of a game
 type Game struct {
-	ID                 GID
-	State              State
-	Mode               Mode
-	SubmissionDuration int
-	VotingDuration     int
-	Players            []*PlayerState
-	NumRounds          int
-	Rounds             []*RoundData
-	StartTime          time.Time
-	wordSource         func() (word, definition string)
+	ID                     GID
+	State                  State
+	Mode                   Mode
+	SubmissionDuration     int
+	VotingDuration         int
+	VotingCompleteDuration int
+	Players                []*PlayerState
+	NumRounds              int
+	Rounds                 []*RoundData
+	StartTime              time.Time
+	wordSource             func() (word, definition string)
 }
 
 func generateID(unambiguous bool, length int) string {
@@ -160,13 +164,14 @@ func NewGame(wordSource func() (word, definition string), mode Mode, numRounds i
 		return nil, fmt.Errorf("voting duration must be between %d and %d", MinimumVotingDuration, MaximumVotingDuration)
 	}
 	return &Game{
-		ID:                 generateGameID(),
-		Mode:               mode,
-		NumRounds:          numRounds,
-		SubmissionDuration: submissionDuration,
-		VotingDuration:     votingDuration,
-		State:              StateNew,
-		wordSource:         wordSource,
+		ID:                     generateGameID(),
+		Mode:                   mode,
+		NumRounds:              numRounds,
+		SubmissionDuration:     submissionDuration,
+		VotingDuration:         votingDuration,
+		VotingCompleteDuration: 10,
+		State:                  StateNew,
+		wordSource:             wordSource,
 	}, nil
 }
 
@@ -293,6 +298,14 @@ func (g *Game) Tick() bool {
 		rem = g.VotingDuration - int(time.Since(r.VotingStartTime).Seconds())
 		if rem < 0 {
 			somethingHappened = true
+			g.closeVotingForCurrentRound()
+		}
+	}
+
+	if r.State == RoundStateVotingComplete {
+		rem = g.VotingCompleteDuration - int(time.Since(r.VotingCompleteStartTime).Seconds())
+		if rem < 0 {
+			somethingHappened = true
 			g.completeCurrentRound()
 			if g.State != StateComplete {
 				rem = g.SubmissionDuration
@@ -311,9 +324,6 @@ func (g *Game) CurrentRound() *RoundData {
 
 // CloseSubmissionsForCurrentRound closes the round for new definions from players and starts voting
 func (g *Game) closeSubmissionsForCurrentRound() error {
-	if g.State != StateActive {
-		return fmt.Errorf("game is not active")
-	}
 	r := g.CurrentRound()
 	if r.State != RoundStateOpen {
 		return fmt.Errorf("round is not open")
@@ -354,16 +364,21 @@ func (g *Game) scoreRound() {
 	}
 }
 
+func (g *Game) closeVotingForCurrentRound() error {
+	r := g.CurrentRound()
+	if r.State != RoundStateVoting {
+		return fmt.Errorf("round is not voting")
+	}
+	r.State = RoundStateVotingComplete
+	r.VotingCompleteStartTime = time.Now()
+	g.scoreRound()
+	return nil
+}
+
 // CompleteCurrentRound closes voting on the current round and tallies up the scores
 func (g *Game) completeCurrentRound() error {
-	if g.State != StateActive {
-		return fmt.Errorf("game is not active")
-	}
-
 	r := g.CurrentRound()
 	r.State = RoundStateComplete
-	g.scoreRound()
-
 	if len(g.Rounds) < g.NumRounds {
 		// if we aren't at maxRounds, spin up a new game
 		newRound := g.createNewRound()
@@ -371,7 +386,6 @@ func (g *Game) completeCurrentRound() error {
 	} else {
 		g.EndGame()
 	}
-
 	return nil
 }
 
@@ -467,7 +481,7 @@ func (g *Game) Vote(player PlayerID, round RoundID, definition DefinitionID) err
 			}
 		}
 		if !anyMissingVotes {
-			g.completeCurrentRound()
+			g.closeVotingForCurrentRound()
 		}
 	}
 	return nil

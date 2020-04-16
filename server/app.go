@@ -56,9 +56,7 @@ func (a *App) Run(addr string) {
 
 	log.Printf("Starting service on %s", addr)
 
-	// ======= REMOVE BEFORE FLIGHT ==============================
-	go a.debugLoop()
-	// ======= /REMOVE BEFORE FLIGHT ==============================
+	go a.loop()
 
 	log.Fatal(http.ListenAndServe(addr, n))
 }

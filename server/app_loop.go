@@ -63,7 +63,6 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 			m.Remaining = g.VotingDuration - int(time.Since(r.VotingStartTime).Seconds())
 			m.CanVote = true
 			for _, d := range r.Definitions {
-				// don't give the player their own definition
 				dm := &definitionMessage{
 					ID:         string(d.ID),
 					Definition: d.Definition,
@@ -75,6 +74,19 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 						}
 					}
 				} else {
+					dm.OwnDefinition = true
+				}
+				m.Definitions = append(m.Definitions, dm)
+			}
+		}
+		if r.State == game.RoundStateVotingComplete {
+			m.Remaining = g.VotingCompleteDuration - int(time.Since(r.VotingCompleteStartTime).Seconds())
+			for _, d := range r.Definitions {
+				dm := &definitionMessage{
+					ID:         string(d.ID),
+					Definition: d.Definition,
+				}
+				if d.Player == targetPlayerID {
 					dm.OwnDefinition = true
 				}
 				m.Definitions = append(m.Definitions, dm)
@@ -146,11 +158,13 @@ func (a *App) gameLoop(g *gameState) {
 	}
 }
 
-func (a *App) debugLoop() {
+func (a *App) loop() {
 	for {
 		for _, g := range a.games {
-			g.PushUpdate()
+			if g.Game.Tick() {
+				g.PushUpdate()
+			}
 		}
-		time.Sleep(2 * time.Second)
+		time.Sleep(time.Second)
 	}
 }
