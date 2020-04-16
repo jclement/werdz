@@ -4,7 +4,7 @@ import { Route } from 'react-router';
 import { Layout } from './components/Layout';
 import { Home } from './components/Home';
 import { About } from './components/About';
-import { Game } from './components/Game';
+import { GameShell } from './components/GameShell';
 import { BrowserRouter as Router } from 'react-router-dom'
 import Axios from 'axios'
 
@@ -21,13 +21,21 @@ export class App extends React.Component<{}, any> {
         .then((resp: any) => {
           this.setState({
             playerId: resp.data.id,
-            playerName: resp.data.id,
           })
           localStorage.setItem('playerid', resp.data.id)
-          localStorage.setItem('playername', resp.data.id)
         })
     }
+
+    this.setName = this.setName.bind(this);
   }
+
+  setName(name: string) {
+    this.setState({
+      playerName: name,
+    });
+    localStorage.setItem('playername', name);
+  }
+
   render() {
     return (
       <Router>
@@ -37,7 +45,8 @@ export class App extends React.Component<{}, any> {
           )} />
           <Route path='/about' component={About} />
           <Route path='/game/:id' render={({ match }) => (
-            <Game gameId={match.params.id} playerId={this.state.playerId} playerName={this.state.playerName} />
+            <GameShell gameId={match.params.id} playerId={this.state.playerId} playerName={this.state.playerName} onSetName={this.setName} /> 
+
           )} />
         </Layout>
       </Router>
