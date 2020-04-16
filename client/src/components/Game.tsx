@@ -80,10 +80,14 @@ export class Game extends Component<GameProps, any> {
     ws_uri += "//" + loc.host;
     ws_uri += "/api/game/" + this.props.gameId + "/ws?name=" + encodeURIComponent(this.props.playerName) + "&playerid=" + encodeURIComponent(this.props.playerId);
 
+    if (!this.props.playerId || !this.props.playerName) {
+      return null
+    }
+
     return (
       <div>
         <Websocket url={ws_uri} onMessage={this.onMessage} />
-        <p>Game : {this.props.gameId}</p>
+        <p>Game : {this.props.gameId} as {this.props.playerName}</p>
         <hr />
         <pre>{JSON.stringify(this.state.gameState, null, 2)}</pre>
 
