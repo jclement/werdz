@@ -89,7 +89,13 @@ func TestStartGame(t *testing.T) {
 	if g.State != StateNew {
 		t.Errorf("Game should start in New state")
 	}
+	if g.CanStartGame() {
+		t.Errorf("Game should not be startable")
+	}
 	g.AddPlayer(GeneratePlayerID(), "Tester")
+	if !g.CanStartGame() {
+		t.Errorf("Game should be startable")
+	}
 	if err := g.StartGame(); err != nil {
 		t.Errorf("Game should have started")
 	}
@@ -101,6 +107,9 @@ func TestStartGame(t *testing.T) {
 	}
 	if len(g.Rounds) != 1 {
 		t.Error("There should be a round!")
+	}
+	if g.CanStartGame() {
+		t.Errorf("Game should not be startable")
 	}
 }
 
@@ -139,16 +148,21 @@ func TestCreateNewRoundFun(t *testing.T) {
 
 func TestCloseSubmissionsForCurrentRound(t *testing.T) {
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 3, 600, 90)
-	pid := GeneratePlayerID()
-	g.AddPlayer(pid, "Tester")
+	p1id := GeneratePlayerID()
+	p2id := GeneratePlayerID()
+	g.AddPlayer(p1id, "Tester 1")
+	g.AddPlayer(p2id, "Tester 2")
 	if err := g.closeSubmissionsForCurrentRound(); err == nil {
 		t.Error("Can't close submissions on an inactive game")
 		return
 	}
 	g.StartGame()
-	g.SubmitWord(pid, g.CurrentRound().ID, "oops")
+	if err := g.SubmitWord(p1id, g.CurrentRound().ID, "oops"); err != nil {
+		t.Error("this should work")
+		return
+	}
 	if err := g.closeSubmissionsForCurrentRound(); err != nil {
-		t.Error("Should have been able to close a new round")
+		t.Error("Should have been able to close a new round", err)
 		return
 	}
 	if g.Rounds[0].State != RoundStateVoting {
@@ -372,6 +386,7 @@ func TestSubmitWord(t *testing.T) {
 	id := GeneratePlayerID()
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 2, 600, 90)
 	g.AddPlayer(id, "Tester")
+	g.AddPlayer(GeneratePlayerID(), "Tester 2")
 	if err := g.SubmitWord(id, RoundID(""), "My Def"); err == nil {
 		t.Error("Can't submit words on inactive game")
 	}
@@ -413,14 +428,13 @@ func TestVoting(t *testing.T) {
 	g.StartGame()
 	roundID := g.CurrentRound().ID
 	g.SubmitWord(id1, roundID, "a")
+	if err := g.Vote(id1, roundID, g.CurrentRound().Definitions[0].ID); err == nil {
+		t.Error("Can't vote on round before voting starts")
+	}
 	g.SubmitWord(id2, roundID, "b")
 	if len(g.CurrentRound().Definitions) != 3 {
 		t.Error("Not enought definitions")
 	}
-	if err := g.Vote(id1, roundID, DefinitionID("")); err == nil {
-		t.Error("Can't submit words on inactive rounds")
-	}
-	g.closeSubmissionsForCurrentRound()
 
 	var defCorrect *Definition
 	var def1 *Definition
@@ -529,6 +543,7 @@ func TestTick(t *testing.T) {
 	id1 := GeneratePlayerID()
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 2, 600, 90)
 	g.AddPlayer(id1, "tester")
+	g.AddPlayer(GeneratePlayerID(), "tester 2")
 	if g.Tick() {
 		t.Error("nothing")
 		return
