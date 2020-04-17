@@ -9,19 +9,24 @@ import (
 )
 
 type gameStateMessage struct {
-	State         game.State           `json:"state"`
-	Mode          game.Mode            `json:"mode"`
-	RoundID       string               `json:"roundId"`
-	Round         int                  `json:"round"`
-	RoundState    game.RoundState      `json:"roundState"`
-	Word          string               `json:"word"`
-	RemainingTime int                  `json:"remainingTime"`
-	TotalTime     int                  `json:"totalTime"`
-	Players       []*playerMessage     `json:"players"`
-	Definitions   []*definitionMessage `json:"definitions"`
-	CanSubmit     bool                 `json:"canSubmit"`
-	CanVote       bool                 `json:"canVote"`
-	CanStart      bool                 `json:"canStart"`
+	State         game.State       `json:"state"`
+	Mode          game.Mode        `json:"mode"`
+	RemainingTime int              `json:"remainingTime"`
+	TotalTime     int              `json:"totalTime"`
+	Players       []*playerMessage `json:"players"`
+	Rounds        []*roundMessage  `json:"rounds"`
+	CurrentRound  *roundMessage    `json:"currentRound"`
+	CanSubmit     bool             `json:"canSubmit"`
+	CanVote       bool             `json:"canVote"`
+	CanStart      bool             `json:"canStart"`
+}
+
+type roundMessage struct {
+	ID          string               `json:"id"`
+	Num         int                  `json:"num"`
+	State       game.RoundState      `json:"state"`
+	Word        string               `json:"word"`
+	Definitions []*definitionMessage `json:"definitions"`
 }
 
 type definitionMessage struct {
@@ -40,6 +45,31 @@ type playerMessage struct {
 	Submitted bool   `json:"submitted"`
 }
 
+func generateRoundSummary(targetPlayerID game.PlayerID, g *game.Game, r *game.RoundData, roundNumber int) *roundMessage {
+	rm := roundMessage{
+		Num:   roundNumber,
+		ID:    string(r.ID),
+		State: r.State,
+		Word:  r.Word,
+	}
+	for _, d := range r.Definitions {
+		dm := &definitionMessage{
+			ID:            string(d.ID),
+			Definition:    d.Definition,
+			OwnDefinition: targetPlayerID == d.Player,
+		}
+		rm.Definitions = append(rm.Definitions, dm)
+		if g.State == game.StateComplete || r.State == game.RoundStateVotingComplete {
+			for _, v := range d.Votes {
+				dm.Votes = append(dm.Votes, string(v))
+			}
+			dm.Player = string(d.Player)
+		}
+	}
+
+	return &rm
+}
+
 func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMessage {
 	m := gameStateMessage{
 		State:    g.State,
@@ -47,12 +77,8 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 		CanStart: g.CanStartGame(),
 	}
 
-	if g.State != game.StateNew {
+	if g.State == game.StateActive {
 		r := g.CurrentRound()
-		m.Round = len(g.Rounds)
-		m.RoundID = string(r.ID)
-		m.RoundState = r.State
-		m.Word = r.Word
 		if r.State == game.RoundStateOpen {
 			m.RemainingTime = g.SubmissionDuration - int(time.Since(r.RoundStartTime).Seconds())
 			m.TotalTime = g.SubmissionDuration
@@ -68,39 +94,23 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 			m.TotalTime = g.VotingDuration
 			m.CanVote = true
 			for _, d := range r.Definitions {
-				dm := &definitionMessage{
-					ID:         string(d.ID),
-					Definition: d.Definition,
-				}
-				if d.Player != targetPlayerID {
-					for _, v := range d.Votes {
-						if v == targetPlayerID {
-							m.CanVote = false
-						}
+				for _, v := range d.Votes {
+					if v == targetPlayerID {
+						m.CanVote = false
 					}
-				} else {
-					dm.OwnDefinition = true
 				}
-				m.Definitions = append(m.Definitions, dm)
 			}
 		}
 		if r.State == game.RoundStateVotingComplete {
 			m.RemainingTime = g.VotingCompleteDuration - int(time.Since(r.VotingCompleteStartTime).Seconds())
 			m.TotalTime = g.VotingCompleteDuration
-			for _, d := range r.Definitions {
-				dm := &definitionMessage{
-					ID:         string(d.ID),
-					Definition: d.Definition,
-				}
-				if d.Player == targetPlayerID {
-					dm.OwnDefinition = true
-				}
-				for _, v := range d.Votes {
-					dm.Votes = append(dm.Votes, string(v))
-				}
-				dm.Player = string(d.Player)
-				m.Definitions = append(m.Definitions, dm)
-			}
+		}
+		m.CurrentRound = generateRoundSummary(targetPlayerID, g, r, len(g.Rounds))
+	}
+
+	if g.State == game.StateComplete {
+		for i, t := range g.Rounds {
+			m.Rounds = append(m.Rounds, generateRoundSummary(targetPlayerID, g, t, i))
 		}
 	}
 

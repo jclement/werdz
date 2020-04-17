@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Table from 'react-bootstrap/Table';
 
 interface RosterProps {
     playerId: string
@@ -8,7 +9,7 @@ interface RosterProps {
 export class Roster extends Component<RosterProps, any> {
     render() {
         return (
-            <table className="table table-striped">
+            <Table striped bordered size="sm">
                 <thead>
                     <tr><th>Player</th><th>Score</th></tr>
                 </thead>
@@ -20,7 +21,7 @@ export class Roster extends Component<RosterProps, any> {
                 </tr>);
                 })}
                 </tbody>
-            </table>
+            </Table>
         );
     }
 }

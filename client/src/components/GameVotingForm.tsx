@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import Button from 'react-bootstrap/Button';
 import Axios from 'axios';
+import { definition } from '../models/definition';
+import { ListGroup } from 'react-bootstrap';
 
 interface GameVotingFormProps {
     gameId: string,
     roundId: string,
     playerId: string,
-    definitions: any,
+    definitions: definition[],
 }
 
 export class GameVotingForm extends Component<GameVotingFormProps, any> {
@@ -33,15 +34,15 @@ export class GameVotingForm extends Component<GameVotingFormProps, any> {
             <div>
 
                 <div>
-                    {this.props.definitions.map((def: any) => {
-                        return (
-                            <div key={def.id}>
-                                <Button disabled={def.ownDefinition} key={def.id} onClick={() => { this.vote(def.id); }}>
+                    <ListGroup>
+                        {this.props.definitions.map((def: any) => {
+                            return (
+                                <ListGroup.Item key={def.id} disabled={def.ownDefinition} onClick={() => { this.vote(def.id); }}>
                                     {def.definition}
-                                </Button>
-                            </div>
-                        );
-                    })}
+                                </ListGroup.Item>
+                            );
+                        })}
+                    </ListGroup>
                 </div>
 
             </div>

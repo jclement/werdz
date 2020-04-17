@@ -29,7 +29,7 @@ export class Home extends Component<HomeProps, any> {
             return (
                 <Row>
                     <Col>
-                        <h1>Hello, {this.props.playerName}</h1>
+                        <h1>Hello, {this.props.playerName || "Stranger!"}</h1>
                         <HomeButton rounds={3} />
                     </Col>
                 </Row>

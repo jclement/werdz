@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Websocket from 'react-websocket';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Axios from 'axios';
 import { Roster } from './Roster';
 import { GameStartButton } from './GameStartButton';
 import { GameHeader } from './GameHeader';
@@ -11,6 +10,7 @@ import { GameVotingForm } from './GameVotingForm';
 import { GameRoundSummary } from './GameRoundSummary';
 import { GameScoreBoard } from './GameScoreBoard';
 import { GameTimer } from './GameTimer';
+import { game } from '../models/game';
 
 interface GameProps {
   gameId: string,
@@ -18,63 +18,31 @@ interface GameProps {
   playerName: string,
 }
 
-export class Game extends Component<GameProps, any> {
+interface GameState{
+  gameState : game | null
+  
+}
+
+export class Game extends Component<GameProps, GameState> {
 
   constructor(props: GameProps) {
     super(props)
 
     this.state = {
       gameState: null,
-      definition: "",
     }
 
     this.onMessage = this.onMessage.bind(this)
-    this.startGame = this.startGame.bind(this)
-    this.submit = this.submit.bind(this)
-    this.vote = this.vote.bind(this)
-    this.onDefChange = this.onDefChange.bind(this)
   }
 
   onMessage(msg: any) {
-    msg = JSON.parse(msg)
+    let gameState : game | null 
+    gameState = JSON.parse(msg)
     this.setState({
-      gameState: msg
+      gameState: gameState
     })
   }
 
-  startGame() {
-    Axios.post("/api/game/" + this.props.gameId + "/start", {
-    }).then(() => {
-    })
-  }
-
-  submit(evt: any) {
-    Axios.post("/api/game/" + this.props.gameId + "/submit", {
-      playerId: this.props.playerId,
-      roundId: this.state.gameState.roundId,
-      definition: this.state.definition,
-    }).then(() => {
-      this.setState({
-        definition: ""
-      })
-    })
-    evt.preventDefault();
-  }
-
-  vote(definitionId: string) {
-    Axios.post("/api/game/" + this.props.gameId + "/vote", {
-      playerId: this.props.playerId,
-      roundId: this.state.gameState.roundId,
-      definitionId: definitionId,
-    }).then(() => {
-    })
-  }
-
-  onDefChange(evt: any) {
-    this.setState({
-      definition: evt.target.value
-    })
-  }
 
   render() {
     // URL for web socket
@@ -95,18 +63,18 @@ export class Game extends Component<GameProps, any> {
       <div>
         <Websocket url={ws_uri} onMessage={this.onMessage} />
 
-        {this.state.gameState &&
+        {this.state.gameState && (this.state.gameState.state === 0 || this.state.gameState.state === 1) &&
           <div>
             <Row>
-              <Col>
+              <Col sm={8}>
                 <GameHeader gameId={this.props.gameId} gameState={this.state.gameState} />
                 {this.state.gameState.canStart && <GameStartButton gameId={this.props.gameId} />}
-                {this.state.gameState.canSubmit && <GameSubmitForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.roundId} />}
-                {this.state.gameState.canVote && <GameVotingForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.roundId} definitions={this.state.gameState.definitions} />}
-                {this.state.gameState.roundState === 2 && <GameRoundSummary playerId={this.props.playerId} gameState={this.state.gameState} />}
-                {this.state.gameState.state === 2 && <GameScoreBoard playerId={this.props.playerId} gameState={this.state.gameState} />}
+                {this.state.gameState.canSubmit && <GameSubmitForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.currentRound.id} />}
+                {this.state.gameState.canVote && <GameVotingForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.currentRound.id} definitions={this.state.gameState.currentRound.definitions} />}
+                {this.state.gameState.currentRound && this.state.gameState.currentRound.state === 2 && <GameRoundSummary playerId={this.props.playerId} gameState={this.state.gameState} />}
+                <br />
               </Col>
-              <Col>
+              <Col sm={4}>
                 <Roster players={this.state.gameState.players} playerId={this.props.playerId} />
               </Col>
             </Row>
@@ -114,9 +82,16 @@ export class Game extends Component<GameProps, any> {
           </div>
         }
 
-        <hr />
-        <pre>{JSON.stringify(this.state.gameState, null, 2)}</pre>
-
+        {this.state.gameState && this.state.gameState.state === 2 &&
+          <div>
+            <Row>
+              <Col>
+                <GameHeader gameId={this.props.gameId} gameState={this.state.gameState} />
+                <GameScoreBoard playerId={this.props.playerId} gameState={this.state.gameState} />
+              </Col>
+            </Row>
+          </div>
+        }
 
       </div>
     );
