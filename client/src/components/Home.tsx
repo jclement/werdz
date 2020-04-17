@@ -72,7 +72,7 @@ export class Home extends Component<HomeProps, HomeState> {
                         </Col>
                     </Row>
                     <Row>
-                        <Col>
+                        <Col sm={6}>
                             <div className="card">
                                 <div className="card-header">
                                     <h4>Start a New Game</h4>
@@ -91,8 +91,9 @@ export class Home extends Component<HomeProps, HomeState> {
                                     <HomeButton rounds={this.state.rounds} />
                                 </div>
                             </div>
+                            <br/>
                         </Col>
-                        <Col>
+                        <Col sm={6}>
                             <div className="card">
                                 <div className="card-header">
                                     <h4>Join a Game</h4>
