@@ -117,7 +117,7 @@ export class Home extends Component<HomeProps, HomeState> {
                                     <Form>
                                         <Form.Group>
                                             <Form.Label>Game Code:</Form.Label>
-                                            <Form.Control type="text" isInvalid={!this.state.gameCodeExists && this.state.gameCode !== ""} maxLength={5} minLength={5} placeholder="i.e. DR27M" value={this.state.gameCode} onChange={this.setGameCode} />
+                                            <Form.Control type="text" isInvalid={!this.state.gameCodeExists && !!this.state.gameCode} maxLength={5} minLength={5} placeholder="i.e. DR27M" value={this.state.gameCode} onChange={this.setGameCode} />
                                             {this.state.gameCode && !this.state.gameCodeExists && this.state.gameCode.length !== 5 && <Form.Control.Feedback type="invalid">Invalid game code</Form.Control.Feedback>}
                                             {this.state.gameCode && !this.state.gameCodeExists && this.state.gameCode.length === 5 && <Form.Control.Feedback type="invalid">Game does not exist</Form.Control.Feedback>}
                                         </Form.Group>
