@@ -40,7 +40,7 @@ export class Home extends Component<HomeProps, HomeState> {
 
     setRounds(evt: any) {
         this.setState({
-            rounds: evt.target.value
+            rounds: Number(evt.target.value)
         })
     }
 
@@ -49,6 +49,7 @@ export class Home extends Component<HomeProps, HomeState> {
             return (
                 <Row>
                     <Col>
+                        <div style={{display: 'flex', justifyContent: 'center'}}><img className="img-fluid" src="title.png" alt="title"/></div>
                         <h1>Hello, {this.props.playerName || "Stranger!"}</h1>
                         <br />
                         <Form>
