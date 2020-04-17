@@ -11,6 +11,7 @@ import { GameRoundSummary } from './GameRoundSummary';
 import { GameScoreBoard } from './GameScoreBoard';
 import { GameTimer } from './GameTimer';
 import { game } from '../models/game';
+import { Alert } from 'react-bootstrap';
 
 interface GameProps {
   gameId: string,
@@ -61,7 +62,10 @@ export class Game extends Component<GameProps, GameState> {
 
     return (
       <div>
-        <Websocket url={ws_uri} onMessage={this.onMessage} />
+        <br />
+        <Websocket url={ws_uri} onMessage={this.onMessage}  />
+
+        {!this.state.gameState && <Alert variant="secondary">Loading or a bad room code.  Who knows!</Alert>}
 
         {this.state.gameState && (this.state.gameState.state === 0 || this.state.gameState.state === 1) &&
           <div>

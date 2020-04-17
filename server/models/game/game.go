@@ -10,15 +10,15 @@ import (
 
 const (
 	// MaximumRounds is the upper limit on the number of rounds in a game
-	MaximumRounds = 10
+	MaximumRounds = 20
 	// MinimumRounds is the lower limit on the number of rounds in a game
 	MinimumRounds = 1
 	// MaximumSubmissionDuration is the maximum duration (seconds) for the submission phase of a round
 	MaximumSubmissionDuration = 600
 	// MinimumSubmissionDuration is the minimum duration (seconds) for the submission phase of a round
-	MinimumSubmissionDuration = 60
+	MinimumSubmissionDuration = 30
 	// MinimumVotingDuration is the minimum duration (seconds) for the voting phase of a round
-	MinimumVotingDuration = 30
+	MinimumVotingDuration = 15
 	// MaximumVotingDuration is the maximum duration (seconds) for the voting phase of a round
 	MaximumVotingDuration = 300
 )
@@ -369,7 +369,7 @@ func (g *Game) closeVotingForCurrentRound() error {
 	r.State = RoundStateVotingComplete
 	r.VotingCompleteStartTime = time.Now()
 	g.scoreRound()
-	if (len(g.Rounds) == g.NumRounds) {
+	if len(g.Rounds) == g.NumRounds {
 		g.completeCurrentRound()
 	}
 	return nil

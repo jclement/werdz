@@ -25,7 +25,7 @@ func (a *App) apiGameNew(w http.ResponseWriter, r *http.Request) {
 		w := a.WordSet.Random()
 		return w.Word, w.Definition
 	}
-	g, _ := game.NewGame(wordFunc, game.ModeNormal, payload.Rounds, 300, 90)
+	g, _ := game.NewGame(wordFunc, game.ModeNormal, payload.Rounds, 60, 30)
 
 	newGame := &gameState{
 		Game:      g,
