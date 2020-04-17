@@ -24,7 +24,7 @@ export class GameShell extends Component<GameShellProps, any> {
 
     onNameUpdate(evt: any) {
         this.setState({
-            name: Number(evt.target.value)
+            name: evt.target.value
         })
     }
 
