@@ -72,13 +72,13 @@ export class Game extends Component<GameProps, GameState> {
                 {this.state.gameState.canSubmit && <GameSubmitForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.currentRound.id} />}
                 {this.state.gameState.canVote && <GameVotingForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.currentRound.id} definitions={this.state.gameState.currentRound.definitions} />}
                 {this.state.gameState.currentRound && this.state.gameState.currentRound.state === 2 && <GameRoundSummary playerId={this.props.playerId} gameState={this.state.gameState} />}
+                <GameTimer remaining={this.state.gameState.remainingTime} total={this.state.gameState.totalTime} />
                 <br />
               </Col>
               <Col sm={4}>
                 <Roster players={this.state.gameState.players} playerId={this.props.playerId} />
               </Col>
             </Row>
-            <GameTimer remaining={this.state.gameState.remainingTime} total={this.state.gameState.totalTime} />
           </div>
         }
 

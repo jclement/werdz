@@ -22,14 +22,14 @@ export class GameRoundSummary extends Component<GameRoundSummaryProps, any> {
                         <ul>
                             {this.props.gameState.currentRound.definitions.map((d) => (
                                 <li key={d.id}>
-                                    {d.definition}
+                                    <b style={!d.player ? { color: "green" } : {}}>{d.definition}</b>
+                                    {d.player && <span>&nbsp;(by {players[d.player]})</span>}
                                     <ul>
-                                        {d.player && <li>Written by {players[d.player]}</li>}
-                                        {!d.player && <li>THE CORRECT ANSWER</li>}
                                         {(d.votes || []).map((v) => (
                                             <li key={v}>Voted for by <i>{players[v]}</i></li>
                                         ))}
                                     </ul>
+                                    <br />
                                 </li>
                             ))}
                         </ul>

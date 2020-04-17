@@ -55,7 +55,7 @@ func generateRoundSummary(targetPlayerID game.PlayerID, g *game.Game, r *game.Ro
 	for _, d := range r.Definitions {
 		dm := &definitionMessage{
 			ID:            string(d.ID),
-			Definition:    d.Definition,
+			Definition:    strings.ToLower(d.Definition),
 			OwnDefinition: targetPlayerID == d.Player,
 		}
 		rm.Definitions = append(rm.Definitions, dm)
