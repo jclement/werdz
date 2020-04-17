@@ -8,7 +8,7 @@ export class About extends Component {
 
                 <p>Werdz is an online word guessing game where you try and make up plausible definitions for escoteric words to fool your friends.</p>
 
-                <p>Werdz was created during the COVID-19 isolation because I wanted more game that were fun to play with friends remotely.</p>
+                <p>Werdz was created during the COVID-19 isolation because I wanted more games that were fun to play with friends remotely.</p>
 
                 <p>If you have questions, suggestions, bug reports, etc. please submit them to <a href="mailto:werdz@werd.ca">werdz@werdz.ca</a></p>
 
