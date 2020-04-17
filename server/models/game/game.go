@@ -187,7 +187,7 @@ func (g *Game) findPlayer(id PlayerID) (index int, player *PlayerState, err erro
 
 // CanStartGame indicates if this game can start
 func (g *Game) CanStartGame() bool {
-	return g.State == StateNew && len(g.activePlayers()) > 0
+	return g.State == StateNew && len(g.activePlayers()) > 1
 }
 
 // PlayerExists returns whether a player is part of this game or not
@@ -369,6 +369,9 @@ func (g *Game) closeVotingForCurrentRound() error {
 	r.State = RoundStateVotingComplete
 	r.VotingCompleteStartTime = time.Now()
 	g.scoreRound()
+	if (len(g.Rounds) == g.NumRounds) {
+		g.completeCurrentRound()
+	}
 	return nil
 }
 

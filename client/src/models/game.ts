@@ -12,4 +12,5 @@ export interface game {
     canSubmit: boolean,
     canVote: boolean,
     canStart: boolean,
+    totalRounds: number,
 }

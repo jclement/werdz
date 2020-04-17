@@ -22,7 +22,9 @@ export class GameRoundSummary extends Component<GameRoundSummaryProps, any> {
                         <ul>
                             {this.props.gameState.currentRound.definitions.map((d) => (
                                 <li key={d.id}>
-                                    <b style={!d.player ? { color: "green" } : {}}>{d.definition}</b>
+                                    <b style={{ 
+                                        color: d.player ? (d.player === this.props.playerId ? "blue": "black") : "green" 
+                                        }}>{d.definition}</b>
                                     {d.player && <span>&nbsp;(by {players[d.player]})</span>}
                                     <ul>
                                         {(d.votes || []).map((v) => (

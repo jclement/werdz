@@ -93,6 +93,7 @@ func TestStartGame(t *testing.T) {
 		t.Errorf("Game should not be startable")
 	}
 	g.AddPlayer(GeneratePlayerID(), "Tester")
+	g.AddPlayer(GeneratePlayerID(), "Tester 2")
 	if !g.CanStartGame() {
 		t.Errorf("Game should be startable")
 	}
@@ -548,7 +549,11 @@ func TestTick(t *testing.T) {
 		t.Error("something")
 		return
 	}
-	g.Vote(id1, g.CurrentRound().ID, g.CurrentRound().Definitions[0].ID)
+	for _, d := range g.CurrentRound().Definitions {
+		if d.Player == rightAnswerPlayerID {
+			g.Vote(id1, g.CurrentRound().ID, d.ID)
+		}
+	}
 	if _, p, err := g.findPlayer(id1); err != nil || p.Score != 0 {
 		t.Error("unexpected player score")
 		return

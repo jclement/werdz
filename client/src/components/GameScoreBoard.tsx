@@ -10,8 +10,8 @@ interface GameScoreBoardProps {
 export class GameScoreBoard extends Component<GameScoreBoardProps, any> {
     render() {
 
-        let players : { [id: string] : string} = {}
-        this.props.gameState.players.forEach((p) => {players[p.id] = p.name})
+        let players: { [id: string]: string } = {}
+        this.props.gameState.players.forEach((p) => { players[p.id] = p.name })
 
         return (
             <div>
@@ -42,18 +42,20 @@ export class GameScoreBoard extends Component<GameScoreBoardProps, any> {
                                 </div>
                                 <div className="card-body">
                                     <ul>
-                                    {r.definitions.map((d) => (
-                                        <li key={d.id}>
-                                            <b style={!d.player ? {color: "green"}: {}}>{d.definition}</b>
-                                            {d.player &&  <span>&nbsp;(by {players[d.player]})</span>}
-                                            <ul>
-                                                {(d.votes || []).map((v) => (
-                                                    <li key={v}>Voted for by <i>{players[v]}</i></li>
-                                                ))}
-                                            </ul>
-                                            <br />
-                                        </li>
-                                    ))}
+                                        {r.definitions.map((d) => (
+                                            <li key={d.id}>
+                                                <b style={{
+                                                    color: d.player ? (d.player === this.props.playerId ? "blue" : "black") : "green"
+                                                }}>{d.definition}</b>
+                                                {d.player && <span>&nbsp;(by {players[d.player]})</span>}
+                                                <ul>
+                                                    {(d.votes || []).map((v) => (
+                                                        <li key={v}>Voted for by <i>{players[v]}</i></li>
+                                                    ))}
+                                                </ul>
+                                                <br />
+                                            </li>
+                                        ))}
                                     </ul>
                                 </div>
                             </div>

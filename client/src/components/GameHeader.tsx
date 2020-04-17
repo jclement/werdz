@@ -15,7 +15,7 @@ export class GameHeader extends Component<GameHeaderProps, any> {
                 {this.props.gameState.state === 1 &&
                     <div>
                         <p><b>Current Word: </b> {this.props.gameState.currentRound.word}</p>
-                        <p><b>Round: </b> {this.props.gameState.currentRound.num}</p>
+                        <p><b>Round: </b> {this.props.gameState.currentRound.num} of {this.props.gameState.totalRounds}</p>
                     </div>
 
                 }

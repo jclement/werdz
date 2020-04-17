@@ -13,6 +13,7 @@ type gameStateMessage struct {
 	Mode          game.Mode        `json:"mode"`
 	RemainingTime int              `json:"remainingTime"`
 	TotalTime     int              `json:"totalTime"`
+	TotalRounds   int              `json:"totalRounds"`
 	Players       []*playerMessage `json:"players"`
 	Rounds        []*roundMessage  `json:"rounds"`
 	CurrentRound  *roundMessage    `json:"currentRound"`
@@ -72,9 +73,10 @@ func generateRoundSummary(targetPlayerID game.PlayerID, g *game.Game, r *game.Ro
 
 func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMessage {
 	m := gameStateMessage{
-		State:    g.State,
-		Mode:     g.Mode,
-		CanStart: g.CanStartGame(),
+		State:       g.State,
+		Mode:        g.Mode,
+		CanStart:    g.CanStartGame(),
+		TotalRounds: g.NumRounds,
 	}
 
 	if g.State == game.StateActive {
@@ -110,7 +112,7 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 
 	if g.State == game.StateComplete {
 		for i, t := range g.Rounds {
-			m.Rounds = append(m.Rounds, generateRoundSummary(targetPlayerID, g, t, i))
+			m.Rounds = append(m.Rounds, generateRoundSummary(targetPlayerID, g, t, i+1))
 		}
 	}
 
