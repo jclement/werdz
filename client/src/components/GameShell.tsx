@@ -97,7 +97,7 @@ export class GameShell extends Component<GameShellProps, GameShellState> {
                             <Form.Label>Name</Form.Label>
                             <Form.Control value={this.state.name} onChange={this.onNameUpdate} type="text" placeholder="Who are you?" isInvalid={(!this.state.nameIsAvailable && !this.state.nameIsAvailableRunning) || this.state.name.length === 0} />
                             {!this.state.name && <Form.Control.Feedback type="invalid">A name is required to join a game</Form.Control.Feedback>}
-                            {!this.state.nameIsAvailable && !this.state.nameIsAvailableRunning && <Form.Control.Feedback type="invalid">This name is already in use in this game</Form.Control.Feedback>}
+                            {this.state.name && !this.state.nameIsAvailable && !this.state.nameIsAvailableRunning && <Form.Control.Feedback type="invalid">This name is already in use in this game</Form.Control.Feedback>}
                         </Form.Group>
                         <Button disabled={!this.state.nameIsAvailable} variant="primary" type="submit">
                             Join Game 

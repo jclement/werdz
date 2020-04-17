@@ -47,7 +47,7 @@ export class App extends React.Component<{}, any> {
           <Route path='/about' component={About} />
           <Route path='/rules' component={Rules} />
           <Route path='/game/:id' render={({ match }) => (
-            <GameShell gameId={match.params.id} playerId={this.state.playerId} playerName={this.state.playerName} onSetName={this.setName} /> 
+            <GameShell gameId={match.params.id} playerId={this.state.playerId} playerName={this.state.playerName || ""} onSetName={this.setName} /> 
 
           )} />
         </Layout>
