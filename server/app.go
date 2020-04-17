@@ -69,6 +69,9 @@ func (a *App) initializeRoutes() {
 	a.router.HandleFunc("/api/game/{id}/submit", a.apiGameSubmit).Methods("POST")
 	a.router.HandleFunc("/api/game/{id}/vote", a.apiGameVote).Methods("POST")
 	a.router.HandleFunc("/api/game/{id}/ws", a.apiGameWs)
+	a.router.HandleFunc("/api/game/{id}/exists", a.apiGameExists).Methods("GET")
+	a.router.HandleFunc("/api/game/{id}/has_player", a.apiGameHasPlayer).Methods("POST")
+	a.router.HandleFunc("/api/game/{id}/name_available", a.apiGameNameAvailable).Methods("POST")
 }
 
 func (a *App) getGame(id game.GID) (*gameState, bool) {

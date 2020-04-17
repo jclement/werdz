@@ -1,0 +1,9 @@
+.gameJoinError {
+    text-align: right;
+    color: red;
+    padding-top: 2px;
+}
+
+.numeric {
+    text-align: right;
+}

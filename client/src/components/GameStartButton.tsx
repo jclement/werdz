@@ -22,6 +22,7 @@ export class GameStartButton extends Component<GameStartButtonProps, any> {
     render() {
         return (
             <div>
+                <h3>Once all players are ready...</h3>
                 <Button onClick={this.startGame}>Start Game</Button>
             </div>
         );

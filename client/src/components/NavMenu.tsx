@@ -34,6 +34,9 @@ export class NavMenu extends Component<{}, any> {
               <LinkContainer to="/">
                 <Nav.Link>Home</Nav.Link>
               </LinkContainer>
+              <LinkContainer to="/rules">
+                <Nav.Link>Rulez</Nav.Link>
+              </LinkContainer>
               <LinkContainer to="/about">
                 <Nav.Link>About</Nav.Link>
               </LinkContainer>

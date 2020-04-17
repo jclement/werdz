@@ -18,13 +18,13 @@ export class GameScoreBoard extends Component<GameScoreBoardProps, any> {
                 <h2>Score Board</h2>
                 <Table striped bordered size="sm">
                     <thead>
-                        <tr><th>Player</th><th>Score</th></tr>
+                        <tr><th>Player</th><th className="numeric">Score</th></tr>
                     </thead>
                     <tbody>
                         {this.props.gameState.players.map((p: any) => {
                             return (<tr key={p.id}>
                                 <td>{this.props.playerId === p.id ? <b>{p.name}</b> : p.name}</td>
-                                <td>{p.score}</td>
+                                <td className="numeric">{p.score}</td>
                             </tr>);
                         })}
                     </tbody>

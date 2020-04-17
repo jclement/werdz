@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -196,17 +197,27 @@ func (g *Game) PlayerExists(id PlayerID) bool {
 	return err == nil
 }
 
+// NameAvailable indicates if the name is available
+func (g* Game) NameAvailable(name string) bool {
+	for _, p := range g.Players {
+		if strings.ToLower(p.Name) == strings.TrimSpace(strings.ToLower(name)) {
+			return false
+		}
+	}
+	return true
+}
+
 // AddPlayer adds a player to the game
 func (g *Game) AddPlayer(id PlayerID, name string) error {
 	for _, p := range g.Players {
 		if p.ID == id {
 			return fmt.Errorf("player with this ID already part of this game")
 		}
-		if p.Name == name {
-			return fmt.Errorf("player with this name already part of this game")
-		}
 	}
-	g.Players = append(g.Players, &PlayerState{ID: id, Name: name})
+	if !g.NameAvailable(name) {
+		return fmt.Errorf("player with this name already part of this game")
+	}
+	g.Players = append(g.Players, &PlayerState{ID: id, Name: strings.TrimSpace(name)})
 	return nil
 }
 

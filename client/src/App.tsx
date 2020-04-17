@@ -7,6 +7,7 @@ import { About } from './components/About';
 import { GameShell } from './components/GameShell';
 import { BrowserRouter as Router } from 'react-router-dom'
 import Axios from 'axios'
+import { Rules } from './components/Rules';
 
 export class App extends React.Component<{}, any> {
   constructor(props: any) {
@@ -44,6 +45,7 @@ export class App extends React.Component<{}, any> {
             <Home playerId={this.state.playerId} playerName={this.state.playerName} />
           )} />
           <Route path='/about' component={About} />
+          <Route path='/rules' component={Rules} />
           <Route path='/game/:id' render={({ match }) => (
             <GameShell gameId={match.params.id} playerId={this.state.playerId} playerName={this.state.playerName} onSetName={this.setName} /> 
 
