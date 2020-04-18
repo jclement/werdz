@@ -33,6 +33,7 @@ export class GameSubmitForm extends Component<GameSubmitFormProps, GameSubmitFor
             definition: this.state.definition,
         }).then(() => {
         })
+        evt.preventDefault()
     }
 
     onDefChange(evt: any) {
@@ -45,12 +46,12 @@ export class GameSubmitForm extends Component<GameSubmitFormProps, GameSubmitFor
 
         return (
             <div>
-                <Form>
+                <Form onSubmit={this.onSubmit}>
                     <Form.Group controlId="def">
                         <Form.Label>Definition</Form.Label>
                         <Form.Control value={this.state.definition} onChange={this.onDefChange} type="text" placeholder="Enter definition" />
                     </Form.Group>
-                    <Button variant="primary" disabled={!this.state.definition} onClick={this.onSubmit}>
+                    <Button variant="primary" disabled={!this.state.definition} type="submit">
                         Submit
                     </Button>
                 </Form>
