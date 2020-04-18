@@ -9,7 +9,11 @@ interface GameSubmitFormProps {
     playerId: string,
 }
 
-export class GameSubmitForm extends Component<GameSubmitFormProps, any> {
+interface GameSubmitFormState {
+    definition: string,
+}
+
+export class GameSubmitForm extends Component<GameSubmitFormProps, GameSubmitFormState> {
 
     constructor(props: GameSubmitFormProps) {
         super(props)
@@ -18,21 +22,17 @@ export class GameSubmitForm extends Component<GameSubmitFormProps, any> {
             definition: "",
         }
 
-        this.submit = this.submit.bind(this)
+        this.onSubmit = this.onSubmit.bind(this)
         this.onDefChange = this.onDefChange.bind(this)
     }
 
-    submit(evt: any) {
+    onSubmit(evt: any) {
         Axios.post("/api/game/" + this.props.gameId + "/submit", {
             playerId: this.props.playerId,
             roundId: this.props.roundId,
             definition: this.state.definition,
         }).then(() => {
-            this.setState({
-                definition: ""
-            })
         })
-        evt.preventDefault();
     }
 
     onDefChange(evt: any) {
@@ -45,14 +45,14 @@ export class GameSubmitForm extends Component<GameSubmitFormProps, any> {
 
         return (
             <div>
-                <Form onSubmit={this.submit}>
+                <Form>
                     <Form.Group controlId="def">
                         <Form.Label>Definition</Form.Label>
                         <Form.Control value={this.state.definition} onChange={this.onDefChange} type="text" placeholder="Enter definition" />
                     </Form.Group>
-                    <Button variant="primary" type="submit">
+                    <Button variant="primary" disabled={!this.state.definition} onClick={this.onSubmit}>
                         Submit
-          </Button>
+                    </Button>
                 </Form>
 
             </div>

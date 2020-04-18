@@ -55,8 +55,8 @@ func (a *App) apiGameWs(w http.ResponseWriter, r *http.Request) {
 		g.Game.SetPlayerInactive(playerID, false)
 	}
 	// give them the current state
-	m := newGameStateMessage(g.Game, playerID)
-	ws.WriteJSON(m)
+	//m := newGameStateMessage(g.Game, playerID)
+	//ws.WriteJSON(m)
 
 	// let the world know we have a new player
 	g.PushUpdate()

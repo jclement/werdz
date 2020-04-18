@@ -597,7 +597,7 @@ func TestTick(t *testing.T) {
 		t.Error("unexpected player score")
 		return
 	}
-	g.CurrentRound().VotingStartTime = time.Now().Add(time.Duration(-91 * time.Second))
+	g.CurrentRound().VotingStartTime = time.Now().Add(-1 * time.Duration(2+g.CurrentRound().VotingDuration) *time.Second)
 	if !g.Tick() {
 		t.Error("something")
 		return
@@ -610,7 +610,7 @@ func TestTick(t *testing.T) {
 		t.Errorf("unexpected player score: %d", p.Score)
 		return
 	}
-	g.CurrentRound().VotingCompleteStartTime = time.Now().Add(-1 * time.Duration(2+g.VotingCompleteDuration) * time.Second)
+	g.CurrentRound().VotingCompleteStartTime = time.Now().Add(-1 * time.Duration(2+g.CurrentRound().VotingCompleteDuration) * time.Second)
 	g.Tick()
 
 	g.CurrentRound().RoundStartTime = time.Now().Add(time.Duration(-800 * time.Second))

@@ -93,8 +93,8 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 			}
 		}
 		if r.State == game.RoundStateVoting {
-			m.RemainingTime = g.VotingDuration - int(time.Since(r.VotingStartTime).Seconds())
-			m.TotalTime = g.VotingDuration
+			m.RemainingTime = r.VotingDuration - int(time.Since(r.VotingStartTime).Seconds())
+			m.TotalTime = r.VotingDuration
 			m.CanVote = true
 			for _, d := range r.Definitions {
 				for _, v := range d.Votes {
@@ -105,8 +105,8 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 			}
 		}
 		if r.State == game.RoundStateVotingComplete {
-			m.RemainingTime = g.VotingCompleteDuration - int(time.Since(r.VotingCompleteStartTime).Seconds())
-			m.TotalTime = g.VotingCompleteDuration
+			m.RemainingTime = r.VotingCompleteDuration - int(time.Since(r.VotingCompleteStartTime).Seconds())
+			m.TotalTime = r.VotingCompleteDuration
 		}
 		m.CurrentRound = generateRoundSummary(targetPlayerID, g, r, len(g.Rounds))
 	}

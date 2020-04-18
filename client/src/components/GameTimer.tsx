@@ -12,45 +12,45 @@ export class GameTimer extends Component<GameTimerProps, any> {
     constructor(props: GameTimerProps) {
         super(props)
         this.state = {
-            remaining: 0,
+            remaining: props.remaining,
         }
         this.timer = this.timer.bind(this);
     }
 
     componentDidMount() {
-        this.intervalId = setInterval(this.timer, 1000);
-     }
-     
-     componentWillUnmount() {
+        this.intervalId = setInterval(this.timer, 100);
+    }
+
+    componentWillUnmount() {
         if (this.intervalId) {
             clearInterval(this.intervalId);
         }
-     }
+    }
 
-     componentDidUpdate(prevProps: GameTimerProps, prevState: any, snapshot: any) {
-         if (prevProps.remaining !== this.props.remaining) {
-             this.setState({
-                 remaining: this.props.remaining
-             })
-         }
-     }
-
-     timer() {
-         let rem = this.state.remaining- 1;
-         if (rem < 0) {
-             rem = 0;
-         }
-         this.setState({
+    timer() {
+        let rem = this.state.remaining - 0.1;
+        if (rem < 0) {
+            rem = 0;
+        }
+        this.setState({
             remaining: rem
-         })
-     }
-     
+        })
+    }
+
+    componentDidUpdate(prevProps: GameTimerProps, prevState: any, snapshot: any) {
+        if (prevProps.remaining !== this.props.remaining) {
+            this.setState({
+                remaining: this.props.remaining
+            })
+        }
+    }
+
     render() {
         return (
             <div>
                 <br />
-                {this.state.remaining> 0 &&
-                <ProgressBar now={(this.state.remaining/this.props.total) * 100} />
+                {this.state.remaining > 0 &&
+                    <ProgressBar variant={this.state.remaining < 5 ? "danger" : (this.state.remaining < 10 ? "warning" : undefined)} now={(this.state.remaining / this.props.total) * 100} label={Math.round(this.state.remaining) + "s"} />
                 }
             </div>
         );

@@ -98,6 +98,8 @@ type RoundData struct {
 	Word                    string
 	RoundStartTime          time.Time
 	VotingStartTime         time.Time
+	VotingDuration          int
+	VotingCompleteDuration  int
 	VotingCompleteStartTime time.Time
 	Definitions             []*Definition
 }
@@ -321,7 +323,7 @@ func (g *Game) Tick() bool {
 	}
 
 	if r.State == RoundStateVoting {
-		rem = g.VotingDuration - int(time.Since(r.VotingStartTime).Seconds())
+		rem = r.VotingDuration - int(time.Since(r.VotingStartTime).Seconds())
 		if rem < 0 {
 			somethingHappened = true
 			g.closeVotingForCurrentRound()
@@ -329,7 +331,7 @@ func (g *Game) Tick() bool {
 	}
 
 	if r.State == RoundStateVotingComplete {
-		rem = g.VotingCompleteDuration - int(time.Since(r.VotingCompleteStartTime).Seconds())
+		rem = r.VotingCompleteDuration - int(time.Since(r.VotingCompleteStartTime).Seconds())
 		if rem < 0 {
 			somethingHappened = true
 			g.completeCurrentRound()
@@ -363,6 +365,7 @@ func (g *Game) closeSubmissionsForCurrentRound() error {
 
 	r.State = RoundStateVoting
 	r.VotingStartTime = time.Now()
+	r.VotingDuration = g.VotingDuration + len(r.Definitions)*5
 
 	if len(r.Definitions) < 2 {
 		g.completeCurrentRound()
@@ -394,6 +397,7 @@ func (g *Game) closeVotingForCurrentRound() error {
 	r := g.CurrentRound()
 	r.State = RoundStateVotingComplete
 	r.VotingCompleteStartTime = time.Now()
+	r.VotingCompleteDuration = g.VotingCompleteDuration + len(r.Definitions)*2
 	g.scoreRound()
 	/*  === some debate about whether the round summary is nice to see on the last round ====
 	if len(g.Rounds) == g.NumRounds {
