@@ -80,7 +80,7 @@ export class Game extends Component<GameProps, GameState> {
                 <br />
               </Col>
               <Col sm={4}>
-                <Roster players={this.state.gameState.players} playerId={this.props.playerId} />
+                <Roster gameState={this.state.gameState} playerId={this.props.playerId} />
               </Col>
             </Row>
           </div>

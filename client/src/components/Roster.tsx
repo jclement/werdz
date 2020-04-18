@@ -1,25 +1,47 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table';
+import { game } from '../models/game';
+import { FaCheckCircle , FaUser } from 'react-icons/fa';
 
 interface RosterProps {
     playerId: string
-    players: any
+    gameState: game
 }
 
 export class Roster extends Component<RosterProps, any> {
     render() {
+        let statusMap: { [id: string]: boolean } = {}
+
+        if (this.props.gameState.state === 1) {
+            if (this.props.gameState.currentRound.state === 0) {
+                this.props.gameState.players.forEach((p) => {
+                    statusMap[p.id] = p.submitted
+                })
+            }
+            if (this.props.gameState.currentRound.state === 1) {
+                this.props.gameState.players.forEach((p) => {
+                    statusMap[p.id] = p.voted
+                })
+            }
+        }
+
         return (
             <Table striped bordered size="sm">
                 <thead>
-                    <tr><th>Player</th><th className="numeric">Score</th></tr>
+                    <tr><th></th><th>Player</th><th className="numeric">Score</th></tr>
                 </thead>
                 <tbody>
-                {this.props.players.map((p: any) => {
-                return (<tr key={p.id}>
-                    <td>{this.props.playerId === p.id ? <b>{p.name}</b> : p.name}</td>
-                    <td className="numeric">{p.score}</td>
-                </tr>);
-                })}
+                    {this.props.gameState.players.map((p: any) => {
+                        return (<tr key={p.id}>
+                            <td style={{textAlign: "center"}}>
+                                {this.props.playerId !== p.id && statusMap[p.id] ? <FaCheckCircle style={{color: "green"}} /> : null}
+                                {this.props.playerId === p.id && !statusMap[p.id] ? <FaUser/> : null}
+                                {this.props.playerId === p.id && statusMap[p.id] ? <FaUser style={{color: "green"}} /> : null}
+                            </td>
+                            <td>{p.name}</td>
+                            <td className="numeric">{p.score}</td>
+                        </tr>);
+                    })}
                 </tbody>
             </Table>
         );
