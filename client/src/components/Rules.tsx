@@ -12,12 +12,15 @@ export class Rules extends Component {
 
                 <ul>
                     <li>Connect with your friends on video (I suggest <a href="https://meet.jit.si">meet.jit.si</a>)</li>
-                    <li>One player starts a new game and shares the code with everybody via. the video chat</li>
+                    <li>One player starts a new game and shares the code with everybody via. the video chat.  That player chooses the number of rounds, and the game mode.
+                    </li>
                     <li>Everybody joins the game</li>
                     <li>Some player presses the start button</li>
                 </ul>
 
                 Once the game has started, you'll play through a series of rounds.  Each round is the same.  
+
+                <h4>Game Mode: Real Words (normal)</h4>
 
                 <ul>
                     <li>The system will select a weird random word and present it to the players</li>
@@ -28,6 +31,20 @@ export class Rules extends Component {
                         <ul>
                             <li>You get one point for each friend who votes for your definition, instead of the correct one. </li>
                             <li>You get three points for guessing the correct definition.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>Game Mode: Fake Words</h4>
+
+                <ul>
+                    <li>The system will select a weird fakem word and present it to the players</li>
+                    <li>The players each have some period of time (the blue bar indicates how much time is left) to make an awesome and hilarious definition and submit it</li>
+                    <li>Once all players have submitted their definition, or the timer has elapsed, the round enters voting mode</li>
+                    <li>During voting mode each player will see the other player's definitions and vote for the funniest / best one</li>
+                    <li>Once all players have voted, the round is scored.
+                        <ul>
+                            <li>You get one point for each friend who votes for your definition. </li>
                         </ul>
                     </li>
                 </ul>

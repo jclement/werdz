@@ -13,6 +13,7 @@ import { GameTimer } from './GameTimer';
 import { game } from '../models/game';
 import { Alert } from 'react-bootstrap';
 import Axios from 'axios';
+import { GameRules } from './GameRules';
 
 interface GameProps {
   gameId: string,
@@ -96,6 +97,7 @@ export class Game extends Component<GameProps, GameState> {
                 {this.state.gameState.canSubmit && <GameSubmitForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.currentRound.id} />}
                 {this.state.gameState.canVote && <GameVotingForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.currentRound.id} definitions={this.state.gameState.currentRound.definitions} />}
                 {this.state.gameState.currentRound && this.state.gameState.currentRound.state === 2 && <GameRoundSummary playerId={this.props.playerId} gameState={this.state.gameState} />}
+                {this.state.gameState.state === 0 && <GameRules mode={this.state.gameState.mode} rounds={this.state.gameState.totalRounds} />}
                 <GameTimer remaining={this.state.gameState.remainingTime} total={this.state.gameState.totalTime} />
                 <br />
               </Col>
