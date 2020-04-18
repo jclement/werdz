@@ -37,9 +37,11 @@ interface HomeState {
     mode : number,
     gameCode: string,
     gameCodeExists: boolean,
+    gameCount: number,
 }
 
 export class Home extends Component<HomeProps, HomeState> {
+    intervalId: NodeJS.Timeout | null = null;
 
     constructor(props: HomeProps) {
         super(props)
@@ -48,10 +50,12 @@ export class Home extends Component<HomeProps, HomeState> {
             mode: 0,
             gameCode: "",
             gameCodeExists: false,
+            gameCount: 0,
         }
         this.setRounds = this.setRounds.bind(this)
         this.setMode = this.setMode.bind(this)
         this.setGameCode = this.setGameCode.bind(this)
+        this.timer = this.timer.bind(this)
     }
 
     setRounds(evt: any) {
@@ -64,6 +68,29 @@ export class Home extends Component<HomeProps, HomeState> {
         this.setState({
             mode: Number(evt.target.value)
         })
+    }
+
+    componentDidMount() {
+        this.intervalId = setInterval(this.timer, 10000);
+        this.loadGameCount()
+    }
+
+    componentWillUnmount() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+        }
+    }
+
+    loadGameCount() {
+        Axios.get('/api/game/count', {}).then((r) => {
+            this.setState({
+                gameCount: r.data
+            })
+        })
+    }
+
+    timer() {
+        this.loadGameCount()
     }
 
     setGameCode(evt: any) {
@@ -128,7 +155,7 @@ export class Home extends Component<HomeProps, HomeState> {
                         <Col sm={6}>
                             <div className="card">
                                 <div className="card-header">
-                                    <b>Join a Game</b>
+                                    <b>Join a Game {this.state.gameCount > 0 ? <span>({this.state.gameCount} active)</span>: null}</b>
                                 </div>
                                 <div className="card-body">
                                     <Form>

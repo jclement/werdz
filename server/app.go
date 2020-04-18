@@ -77,6 +77,7 @@ func (a *App) initializeRoutes() {
 	a.router.HandleFunc("/api/game/{id}/has_player", a.apiGameHasPlayer).Methods("POST")
 	a.router.HandleFunc("/api/game/{id}/name_available", a.apiGameNameAvailable).Methods("POST")
 	a.router.HandleFunc("/api/game/{id}/ping", a.apiGamePing).Methods("POST")
+	a.router.HandleFunc("/api/game/count", a.apiGameCount).Methods("GET")
 }
 
 // getGame loads from disk if the game has been saved
