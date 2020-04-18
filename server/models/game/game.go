@@ -246,7 +246,6 @@ func (g *Game) RemovePlayer(id PlayerID) error {
 // This is mostly just a display thing and a way of shortening the voting / submission
 // process since we are waiting for the timer / all active players to vote.
 func (g *Game) SetPlayerInactive(id PlayerID, inactive bool) error {
-	fmt.Printf("SetInactive %s = %t\n", id, inactive)
 	_, p, err := g.findPlayer(id)
 	if err != nil || p.Deleted {
 		return fmt.Errorf("player does not exist")

@@ -59,8 +59,6 @@ func (a *App) apiGameWs(w http.ResponseWriter, r *http.Request) {
 	m := newGameStateMessage(g.Game, playerID)
 	ws.WriteJSON(m)
 
-	fmt.Printf("Game %s joined by %s (%s)\n", id, name, string(playerID))
-
 	// let the world know we have a new player
 	g.PushUpdate()
 }
