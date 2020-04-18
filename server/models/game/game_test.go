@@ -294,13 +294,13 @@ func TestAddingPlayers(t *testing.T) {
 		t.Error("Adding player should succeed here")
 		return
 	}
-	if _, p, err := g.findPlayer(p1id); err != nil || p.Name != "Tester 1" || p.ID != p1id {
+	if p, err := g.FindPlayer(p1id); err != nil || p.Name != "Tester 1" || p.ID != p1id {
 		t.Error("Can't find Tester 1")
 	}
-	if _, p, err := g.findPlayer(p2id); err != nil || p.Name != "Tester 2" || p.ID != p2id {
+	if p, err := g.FindPlayer(p2id); err != nil || p.Name != "Tester 2" || p.ID != p2id {
 		t.Error("Can't find Tester 2")
 	}
-	if _, p, err := g.findPlayer("bad user"); err == nil || p != nil {
+	if p, err := g.FindPlayer("bad user"); err == nil || p != nil {
 		t.Error("Shouldn't find non-existant user")
 	}
 
@@ -313,7 +313,7 @@ func TestRemovePlayer(t *testing.T) {
 		t.Error("Adding player should succeed here")
 		return
 	}
-	_, p, _ := g.findPlayer(p1id)
+	p, _ := g.FindPlayer(p1id)
 	if p.Deleted {
 		t.Error("Player shouldn't be deleted yet")
 		return
@@ -494,13 +494,13 @@ func TestVoting(t *testing.T) {
 	}
 	g.completeCurrentRound()
 
-	if _, p, err := g.findPlayer(id1); err == nil {
+	if p, err := g.FindPlayer(id1); err == nil {
 		if p.Score != 0 {
 			t.Error("Player 1 score should be zero")
 		}
 	}
 
-	if _, p, err := g.findPlayer(id2); err == nil {
+	if p, err := g.FindPlayer(id2); err == nil {
 		if p.Score != 4 {
 			t.Error("Player 2 score should be four")
 		}
@@ -528,7 +528,7 @@ func TestEndGame(t *testing.T) {
 	if err := g.EndGame(); err != nil {
 		t.Error("This should work")
 	}
-	if _, p, err := g.findPlayer(id1); err == nil {
+	if p, err := g.FindPlayer(id1); err == nil {
 		if p.Score != 3 {
 			t.Error("Player 1 score should be three")
 		}
@@ -593,11 +593,11 @@ func TestTick(t *testing.T) {
 			g.Vote(id1, g.CurrentRound().ID, d.ID)
 		}
 	}
-	if _, p, err := g.findPlayer(id1); err != nil || p.Score != 0 {
+	if p, err := g.FindPlayer(id1); err != nil || p.Score != 0 {
 		t.Error("unexpected player score")
 		return
 	}
-	g.CurrentRound().VotingStartTime = time.Now().Add(-1 * time.Duration(2+g.CurrentRound().VotingDuration) *time.Second)
+	g.CurrentRound().VotingStartTime = time.Now().Add(-1 * time.Duration(2+g.CurrentRound().VotingDuration) * time.Second)
 	if !g.Tick() {
 		t.Error("something")
 		return
@@ -606,7 +606,7 @@ func TestTick(t *testing.T) {
 		t.Error("unexpected round state")
 		return
 	}
-	if _, p, err := g.findPlayer(id1); err != nil || p.Score != 3 {
+	if p, err := g.FindPlayer(id1); err != nil || p.Score != 3 {
 		t.Errorf("unexpected player score: %d", p.Score)
 		return
 	}

@@ -178,14 +178,15 @@ func NewGame(wordSource func() (word, definition string), mode Mode, numRounds i
 	}, nil
 }
 
-func (g *Game) findPlayer(id PlayerID) (index int, player *PlayerState, err error) {
+// FindPlayer finds a player record by ID
+func (g *Game) FindPlayer(id PlayerID) (player *PlayerState, err error) {
 
-	for i, p := range g.Players {
+	for _, p := range g.Players {
 		if p.ID == id {
-			return i, p, nil
+			return p, nil
 		}
 	}
-	return 0, nil, fmt.Errorf("player not found")
+	return nil, fmt.Errorf("player not found")
 }
 
 // CanStartGame indicates if this game can start
@@ -204,7 +205,7 @@ func (g *Game) CanStartGame() bool {
 
 // PlayerExists returns whether a player is part of this game or not
 func (g *Game) PlayerExists(id PlayerID) bool {
-	_, _, err := g.findPlayer(id)
+	_, err := g.FindPlayer(id)
 	return err == nil
 }
 
@@ -236,7 +237,7 @@ func (g *Game) AddPlayer(id PlayerID, name string) error {
 // Deleted players are considerd gone (but left for historical scorting purposes).
 // Deleted players are not able to take actions in a game
 func (g *Game) RemovePlayer(id PlayerID) error {
-	_, p, err := g.findPlayer(id)
+	p, err := g.FindPlayer(id)
 	if err != nil || p.Deleted {
 		return fmt.Errorf("player does not exist")
 	}
@@ -248,7 +249,7 @@ func (g *Game) RemovePlayer(id PlayerID) error {
 // This is mostly just a display thing and a way of shortening the voting / submission
 // process since we are waiting for the timer / all active players to vote.
 func (g *Game) SetPlayerInactive(id PlayerID, inactive bool) error {
-	_, p, err := g.findPlayer(id)
+	p, err := g.FindPlayer(id)
 	if err != nil || p.Deleted {
 		return fmt.Errorf("player does not exist")
 	}
@@ -258,7 +259,7 @@ func (g *Game) SetPlayerInactive(id PlayerID, inactive bool) error {
 
 // IsPlayerInactive indicates if a player is inactive
 func (g *Game) IsPlayerInactive(id PlayerID) (bool, error) {
-	_, p, err := g.findPlayer(id)
+	p, err := g.FindPlayer(id)
 	if err != nil || p.Deleted {
 		return false, fmt.Errorf("player does not exist")
 	}
@@ -380,13 +381,13 @@ func (g *Game) scoreRound() {
 		if def.Player == rightAnswerPlayerID {
 			// this is the right answer.  give each of these people 3 pts
 			for _, id := range def.Votes {
-				if _, p, err := g.findPlayer(id); err == nil {
+				if p, err := g.FindPlayer(id); err == nil {
 					p.Score += 3
 				}
 			}
 		} else {
 			// this is a note.  +1 to the owner
-			if _, p, err := g.findPlayer(def.Player); err == nil {
+			if p, err := g.FindPlayer(def.Player); err == nil {
 				p.Score += len(def.Votes)
 			}
 		}
@@ -433,7 +434,7 @@ func (g *Game) SubmitWord(player PlayerID, round RoundID, definition string) err
 	if r.ID != round {
 		return fmt.Errorf("not the correct round")
 	}
-	if _, p, err := g.findPlayer(player); err != nil || p.Deleted {
+	if p, err := g.FindPlayer(player); err != nil || p.Deleted {
 		return fmt.Errorf("player not found")
 	}
 	for _, def := range r.Definitions {
@@ -480,7 +481,7 @@ func (g *Game) Vote(player PlayerID, round RoundID, definition DefinitionID) err
 	if r.ID != round {
 		return fmt.Errorf("not the correct round")
 	}
-	if _, p, err := g.findPlayer(player); err != nil || p.Deleted {
+	if p, err := g.FindPlayer(player); err != nil || p.Deleted {
 		return fmt.Errorf("player not found")
 	}
 	for _, def := range r.Definitions {
