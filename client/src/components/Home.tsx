@@ -6,11 +6,12 @@ import Form from 'react-bootstrap/Form';
 import { useHistory } from "react-router-dom";
 import Axios from 'axios';
 
-function HomeButton(props: { rounds: number }) {
+function HomeButton(props: { mode: number, rounds: number }) {
     let history = useHistory();
     return (<Button onClick={() => {
         Axios.post('/api/game/new', {
-            rounds: props.rounds
+            rounds: props.rounds,
+            mode: props.mode
         }).then((resp: any) => {
             history.push('/game/' + resp.data.id);
         }).catch((err) => {
@@ -33,6 +34,7 @@ interface HomeProps {
 
 interface HomeState {
     rounds: number,
+    mode : number,
     gameCode: string,
     gameCodeExists: boolean,
 }
@@ -43,16 +45,24 @@ export class Home extends Component<HomeProps, HomeState> {
         super(props)
         this.state = {
             rounds: 7,
+            mode: 0,
             gameCode: "",
             gameCodeExists: false,
         }
         this.setRounds = this.setRounds.bind(this)
+        this.setMode = this.setMode.bind(this)
         this.setGameCode = this.setGameCode.bind(this)
     }
 
     setRounds(evt: any) {
         this.setState({
             rounds: Number(evt.target.value)
+        })
+    }
+
+    setMode(evt: any) {
+        this.setState({
+            mode: Number(evt.target.value)
         })
     }
 
@@ -102,8 +112,15 @@ export class Home extends Component<HomeProps, HomeState> {
                                                 <option value={11}>Die Hard (11 rounds)</option>
                                             </Form.Control>
                                         </Form.Group>
+                                        <Form.Group>
+                                            <Form.Label>Game Type:</Form.Label>
+                                            <Form.Control as="select" value={this.state.mode} onChange={this.setMode}>
+                                                <option value={0}>Normal</option>
+                                                <option value={1}>Fun Mode (made up words, no right answer)</option>
+                                            </Form.Control>
+                                        </Form.Group>
                                     </Form>
-                                    <HomeButton rounds={this.state.rounds} />
+                                    <HomeButton mode={this.state.mode} rounds={this.state.rounds} />
                                 </div>
                             </div>
                             <br />

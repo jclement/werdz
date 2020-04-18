@@ -114,6 +114,22 @@ func TestStartGame(t *testing.T) {
 	}
 }
 
+func TestStartGameFun(t *testing.T) {
+	g, _ := NewGame(testableWordGenerator(), ModeFun, 3, 600, 90)
+	if g.CanStartGame() {
+		t.Errorf("Game should not be startable")
+	}
+	g.AddPlayer(GeneratePlayerID(), "Tester")
+	g.AddPlayer(GeneratePlayerID(), "Tester 2")
+	if g.CanStartGame() {
+		t.Errorf("Game should not be startable")
+	}
+	g.AddPlayer(GeneratePlayerID(), "Tester 3")
+	if !g.CanStartGame() {
+		t.Errorf("Game should be startable")
+	}
+}
+
 func TestCreateNewRoundNormal(t *testing.T) {
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 3, 600, 90)
 	r := g.createNewRound()
@@ -175,6 +191,7 @@ func TestCloseSubmissionsForCurrentRound(t *testing.T) {
 func TestCloseSubmissionsForCurrentRoundNoVotes(t *testing.T) {
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 3, 600, 90)
 	g.AddPlayer(GeneratePlayerID(), "Tester")
+	g.AddPlayer(GeneratePlayerID(), "Tester 2")
 	g.StartGame()
 	if err := g.closeSubmissionsForCurrentRound(); err != nil {
 		t.Error("Should have been able to close a new round")
@@ -193,6 +210,7 @@ func TestCloseSubmissionsForCurrentRoundNoVotes(t *testing.T) {
 func TestCompleteCurrentRoundBeforeVoting(t *testing.T) {
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 3, 600, 90)
 	g.AddPlayer(GeneratePlayerID(), "Tester")
+	g.AddPlayer(GeneratePlayerID(), "Tester 2")
 	g.StartGame()
 	if err := g.completeCurrentRound(); err != nil {
 		t.Error("Should have been able to close a new round")
@@ -211,6 +229,7 @@ func TestCompleteCurrentRoundBeforeVoting(t *testing.T) {
 func TestCompleteCurrentRoundAfterVoting(t *testing.T) {
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 3, 600, 90)
 	g.AddPlayer(GeneratePlayerID(), "Tester")
+	g.AddPlayer(GeneratePlayerID(), "Tester 2")
 	g.StartGame()
 	// add some votes in here for scoring
 	if err := g.closeSubmissionsForCurrentRound(); err != nil {
@@ -230,6 +249,7 @@ func TestCompleteCurrentRoundAfterVoting(t *testing.T) {
 func TestCompleteCurrentRoundEndsGame(t *testing.T) {
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 2, 600, 90)
 	g.AddPlayer(GeneratePlayerID(), "Tester")
+	g.AddPlayer(GeneratePlayerID(), "Tester 2")
 	g.StartGame()
 	if len(g.Rounds) != 1 {
 		t.Error("Expecting 1 round")
@@ -321,7 +341,15 @@ func TestInactivePlayer(t *testing.T) {
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 2, 600, 90)
 	g.AddPlayer(p1id, "Tester 1")
 	_, p, _ := g.findPlayer(p1id)
+	if _, e := g.IsPlayerInactive(GeneratePlayerID()); e == nil {
+		t.Error("IsPlayerInactive should return an error on non-existant players")
+		return
+	}
 	if p.Inactive {
+		t.Error("Player shouldn't be inactive yet")
+		return
+	}
+	if b, e := g.IsPlayerInactive(p1id); e == nil && b {
 		t.Error("Player shouldn't be inactive yet")
 		return
 	}
@@ -331,6 +359,10 @@ func TestInactivePlayer(t *testing.T) {
 	}
 	if !p.Inactive {
 		t.Error("Now he should be inactive")
+		return
+	}
+	if b, e := g.IsPlayerInactive(p1id); e == nil && !b {
+		t.Error("Player shouldn be inactive yet")
 		return
 	}
 	if err := g.SetPlayerInactive(p1id, false); err != nil {
@@ -480,12 +512,19 @@ func TestEndGame(t *testing.T) {
 	id1 := GeneratePlayerID()
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 2, 600, 90)
 	g.AddPlayer(id1, "Tester 1")
+	g.AddPlayer(GeneratePlayerID(), "Tester 2")
 	g.StartGame()
 	rid := g.CurrentRound().ID
 	g.SubmitWord(id1, rid, "a")
 	g.closeSubmissionsForCurrentRound()
-	defCorrect := g.CurrentRound().Definitions[0].ID
+	var defCorrect DefinitionID
+	for _, d := range g.CurrentRound().Definitions {
+		if d.Player == rightAnswerPlayerID {
+			defCorrect = d.ID
+		}
+	}
 	g.Vote(id1, rid, defCorrect)
+	g.closeVotingForCurrentRound()
 	if err := g.EndGame(); err != nil {
 		t.Error("This should work")
 	}

@@ -11,6 +11,7 @@ import (
 
 type apiGameNewRequest struct {
 	Rounds int `json:"rounds"`
+	Mode   int `json:"mode"`
 }
 
 type apiGameNewResponse struct {
@@ -22,11 +23,24 @@ func (a *App) apiGameNew(w http.ResponseWriter, r *http.Request) {
 	if err := webservice.HandleJSONRequest(w, r, &payload); err != nil {
 		return
 	}
-	wordFunc := func() (word, definition string) {
-		w := a.WordSet.Random()
-		return w.Word, w.Definition
+	var wordFunc func() (word, definition string)
+
+	if payload.Mode == 0 {
+		wordFunc = func() (word, definition string) {
+			w := a.realWords.Random()
+			return w.Word, w.Definition
+		}
+	} else if payload.Mode == 1 {
+		wordFunc = func() (word, definition string) {
+			w := a.fakeWords.Random()
+			return w, ""
+		}
+	} else {
+		webservice.RespondWithError(w, http.StatusInternalServerError, "unsupport game mode")
+		return
 	}
-	g, _ := game.NewGame(wordFunc, game.ModeNormal, payload.Rounds, 60, 30)
+
+	g, _ := game.NewGame(wordFunc, game.Mode(payload.Mode), payload.Rounds, 60, 30)
 
 	newGame := &gameState{
 		Game:          g,

@@ -9,8 +9,9 @@
 
 ## word files directory ############################################
 #Words: ./data/words.json
+#FakeWords: ./data/fake-words.json
 
 ## Mattermost Webhook ##############################################
-#WebhookURL: https://chat.zeos.ca/hooks/jo7q4788zirmjejkxt3cfeqdee
+#WebhookURL: https://chat.zeos.ca/hooks/...
 #WebhookUser: Development Instance
 #WebhookImageURL: https://www.mattermost.org/wp-content/uploads/2016/04/icon.png

@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/urfave/negroni"
+	"gitlab.adipose.net/jeff/werdz/models/fakewords"
 	"gitlab.adipose.net/jeff/werdz/models/game"
 	"gitlab.adipose.net/jeff/werdz/models/words"
 	"gitlab.adipose.net/jeff/werdz/util/mattermost"
@@ -30,10 +31,11 @@ func (g *gameState) PushUpdate() {
 
 // App represents an instance of the application server
 type App struct {
-	router  *mux.Router
-	webhook mattermost.Webhook
-	games   map[game.GID]*gameState
-	WordSet words.WordSet
+	router    *mux.Router
+	webhook   mattermost.Webhook
+	games     map[game.GID]*gameState
+	realWords words.WordSet
+	fakeWords fakewords.FakeWordSet
 }
 
 // Initialize initializes up the application server

@@ -16,6 +16,7 @@ func main() {
 	// Default configuration settings
 	viper.SetDefault("Listen", "localhost:8100")
 	viper.SetDefault("Words", "./data/words.json")
+	viper.SetDefault("FakeWords", "./data/fake-words.json")
 
 	// Parse configuration files
 	viper.SetConfigName("werdz.yaml")
@@ -39,7 +40,14 @@ func main() {
 		panic(err)
 	}
 	defer rdr.Close()
-	a.WordSet.Load(rdr)
+	a.realWords.Load(rdr)
+
+	rdr, err = os.Open(viper.GetString("FakeWords"))
+	if err != nil {
+		panic(err)
+	}
+	defer rdr.Close()
+	a.fakeWords.Load(rdr)
 
 	a.SetMattermostWebhook(mattermost.New(
 		viper.GetString("WebhookURL"),

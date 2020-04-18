@@ -188,7 +188,16 @@ func (g *Game) findPlayer(id PlayerID) (index int, player *PlayerState, err erro
 
 // CanStartGame indicates if this game can start
 func (g *Game) CanStartGame() bool {
-	return g.State == StateNew && len(g.activePlayers()) > 1
+	if g.State != StateNew {
+		return false
+	}
+	if g.Mode == ModeNormal && len(g.activePlayers()) < 2 {
+		return false
+	}
+	if g.Mode == ModeFun && len(g.activePlayers()) < 3 {
+		return false
+	}
+	return true
 }
 
 // PlayerExists returns whether a player is part of this game or not
@@ -217,7 +226,7 @@ func (g *Game) AddPlayer(id PlayerID, name string) error {
 	if !g.NameAvailable(name) {
 		return fmt.Errorf("player with this name already part of this game")
 	}
-	g.Players = append(g.Players, &PlayerState{ID: id, Name: strings.TrimSpace(name)})
+	g.Players = append(g.Players, &PlayerState{ID: id, Name: strings.TrimSpace(name), Inactive: false})
 	return nil
 }
 
@@ -279,11 +288,8 @@ func (g *Game) createNewRound() *RoundData {
 
 // StartGame begins the game
 func (g *Game) StartGame() error {
-	if g.State != StateNew {
-		return fmt.Errorf("game has alread been started")
-	}
-	if len(g.Players) == 0 {
-		return fmt.Errorf("starting a game requires players")
+	if !g.CanStartGame() {
+		return fmt.Errorf("Unable to start game")
 	}
 	g.State = StateActive
 	g.StartTime = time.Now()
