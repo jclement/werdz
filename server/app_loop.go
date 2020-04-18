@@ -146,14 +146,14 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 	}
 
 	// sort the players by score and then by name
-	sort.Slice(g.Players, func(i, j int) bool {
-		if g.Players[i].Inactive == g.Players[j].Inactive {
-			if g.Players[i].Score == g.Players[j].Score {
-				return strings.ToUpper(g.Players[i].Name) < strings.ToUpper(g.Players[j].Name)
+	sort.Slice(m.Players, func(i, j int) bool {
+		if m.Players[i].Inactive == m.Players[j].Inactive {
+			if m.Players[i].Score == m.Players[j].Score {
+				return strings.ToUpper(m.Players[i].Name) < strings.ToUpper(m.Players[j].Name)
 			}
-			return g.Players[i].Score > g.Players[j].Score
+			return m.Players[i].Score > m.Players[j].Score
 		}
-		return !g.Players[i].Inactive
+		return !m.Players[i].Inactive
 	})
 	return m
 }

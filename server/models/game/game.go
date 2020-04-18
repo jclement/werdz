@@ -112,7 +112,7 @@ type Game struct {
 	SubmissionDuration     int
 	VotingDuration         int
 	VotingCompleteDuration int
-	Players                []*PlayerState
+	Players                map[PlayerID]*PlayerState
 	NumRounds              int
 	Rounds                 []*RoundData
 	StartTime              time.Time
@@ -175,18 +175,19 @@ func NewGame(wordSource func() (word, definition string), mode Mode, numRounds i
 		VotingCompleteDuration: 10,
 		State:                  StateNew,
 		wordSource:             wordSource,
+		Players:                make(map[PlayerID]*PlayerState),
 	}, nil
 }
 
 // FindPlayer finds a player record by ID
 func (g *Game) FindPlayer(id PlayerID) (player *PlayerState, err error) {
 
-	for _, p := range g.Players {
-		if p.ID == id {
-			return p, nil
-		}
+	p, ok := g.Players[id]
+	if !ok {
+		return nil, fmt.Errorf("player not found")
+
 	}
-	return nil, fmt.Errorf("player not found")
+	return p, nil
 }
 
 // CanStartGame indicates if this game can start
@@ -229,7 +230,7 @@ func (g *Game) AddPlayer(id PlayerID, name string) error {
 	if !g.NameAvailable(name) {
 		return fmt.Errorf("player with this name already part of this game")
 	}
-	g.Players = append(g.Players, &PlayerState{ID: id, Name: strings.TrimSpace(name), Inactive: false})
+	g.Players[id] = &PlayerState{ID: id, Name: strings.TrimSpace(name), Inactive: false}
 	return nil
 }
 

@@ -340,7 +340,7 @@ func TestInactivePlayer(t *testing.T) {
 	p1id := GeneratePlayerID()
 	g, _ := NewGame(testableWordGenerator(), ModeNormal, 2, 600, 90)
 	g.AddPlayer(p1id, "Tester 1")
-	_, p, _ := g.findPlayer(p1id)
+	p, _ := g.FindPlayer(p1id)
 	if _, e := g.IsPlayerInactive(GeneratePlayerID()); e == nil {
 		t.Error("IsPlayerInactive should return an error on non-existant players")
 		return
