@@ -6,48 +6,53 @@ export class Rules extends Component {
             <div>
                 <h1>Rulez for Werdz</h1>
 
-                <h3>Game Play:</h3>
                 <p>It is recommended that you play this while video chatting with the other 3-10 other players.</p>
-                <p>What works well for us is sitting in front of a laptop for the video chat, and phones for the game.</p>
+                <p>What works well for us is sitting in front of a laptop for the video chat, and using phones for the game.</p>
 
                 <ul>
                     <li>Connect with your friends on video (I suggest <a href="https://meet.jit.si">meet.jit.si</a>)</li>
                     <li>One player starts a new game and shares the code with everybody via. the video chat.  That player chooses the number of rounds, and the game mode.
                     </li>
                     <li>Everybody joins the game</li>
-                    <li>Some player presses the start button</li>
+                    <li>Some player chooses the game type, number of rounds, and presses the start button</li>
                 </ul>
 
-                Once the game has started, you'll play through a series of rounds.  Each round is the same.  
 
-                <h4>Game Mode: Real Words (normal)</h4>
-
-                <ul>
-                    <li>The system will select a weird random word and present it to the players</li>
-                    <li>The players each have some period of time (the blue bar indicates how much time is left) to make an awesome definition and submit it</li>
-                    <li>Once all players have submitted their definition, or the timer has elapsed, the round enters voting mode</li>
-                    <li>During voting mode each player will see the real definition and all of the player submitted definitions and votes on which one they thing is correct</li>
-                    <li>Once all players have voted, the round is scored.
+                <div className="card">
+                    <div className="card-header">
+                        <h4>Rules for Normal Mode</h4>
+                    </div>
+                    <div className="card-body">
                         <ul>
-                            <li>You get one point for each friend who votes for your definition, instead of the correct one. </li>
-                            <li>You get three points for guessing the correct definition.</li>
+                        <li>This game will consist of a number rounds.</li>
+                        <li>In each round, you will be presented with an unusual <b>but real</b> word.</li>
+                        <li>You will have to make up a definition that you think your friends will believe is the correct definition (hint: the real definitions are usually fairly short such as 'room for conversation').</li>
+                        <li>Once everybody has submitted their best guess for what the word means, you'll be presented with a shuffled list of everybody's definitions and the correct definition.</li>
+                        <li>You get one point for each of your friends who mistakenly pick your definition as the correct definition.</li>
+                        <li>You get three points if you can correctly identify the real definition.</li>
+                        <li>At the end of the game, the player with the most points is the winner.</li>
+                        <li>That's it.  Have fun. </li>
                         </ul>
-                    </li>
-                </ul>
+                    </div>
+                </div>
+<br />
 
-                <h4>Game Mode: Fake Words</h4>
-
-                <ul>
-                    <li>The system will select a weird fakem word and present it to the players</li>
-                    <li>The players each have some period of time (the blue bar indicates how much time is left) to make an awesome and hilarious definition and submit it</li>
-                    <li>Once all players have submitted their definition, or the timer has elapsed, the round enters voting mode</li>
-                    <li>During voting mode each player will see the other player's definitions and vote for the funniest / best one</li>
-                    <li>Once all players have voted, the round is scored.
+                <div className="card">
+                    <div className="card-header">
+                        <h4>Rules for this game</h4>
+                    </div>
+                    <div className="card-body">
                         <ul>
-                            <li>You get one point for each friend who votes for your definition. </li>
+                        <li>This game will consist of a number rounds.</li>
+                        <li>In each round, you will be presented with a crazy random word.</li>
+                        <li>You will have to make up an outlandish definition for the crazy random word.  Something that's so hilarious and awesome that your friends have to vote for it!</li>
+                        <li>You get one point for each vote your crazy definition gets.</li>
+                        <li>At the end of the game, the player with the most points is the winner.</li>
+                        <li>That's it.  Have fun. </li>
                         </ul>
-                    </li>
-                </ul>
+                    </div>
+                </div>
+
 
             </div>
         );
