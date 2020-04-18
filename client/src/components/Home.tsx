@@ -115,8 +115,8 @@ export class Home extends Component<HomeProps, HomeState> {
                                         <Form.Group>
                                             <Form.Label>Game Type:</Form.Label>
                                             <Form.Control as="select" value={this.state.mode} onChange={this.setMode}>
-                                                <option value={0}>Normal</option>
-                                                <option value={1}>Fun Mode (made up words, no right answer)</option>
+                                                <option value={0}>Real Words (normal)</option>
+                                                <option value={1}>Fake Words</option>
                                             </Form.Control>
                                         </Form.Group>
                                     </Form>
