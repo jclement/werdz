@@ -17,6 +17,10 @@ export class App extends React.Component<{}, any> {
       playerName: localStorage.getItem("playername"),
     }
 
+    this.setName = this.setName.bind(this);
+  }
+
+  componentDidMount() {
     if (!this.state.playerId) {
       Axios.get('/api/player/generate', {})
         .then((resp: any) => {
@@ -26,8 +30,6 @@ export class App extends React.Component<{}, any> {
           localStorage.setItem('playerid', resp.data.id)
         })
     }
-
-    this.setName = this.setName.bind(this);
   }
 
   setName(name: string) {
@@ -38,6 +40,8 @@ export class App extends React.Component<{}, any> {
   }
 
   render() {
+    if (!this.state.playerId) return null;
+
     return (
       <Router>
         <Layout>
