@@ -11,6 +11,6 @@ import (
 func (a *App) apiGameExists(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	_, gameFound := a.games[game.GID(id)]
-	webservice.RespondWithJSON(w, http.StatusOK, gameFound)
+	_, found := a.getGame(game.GID(id))
+	webservice.RespondWithJSON(w, http.StatusOK, found)
 }

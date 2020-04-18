@@ -44,6 +44,7 @@ type playerMessage struct {
 	Score     int    `json:"score"`
 	Voted     bool   `json:"voted"`
 	Submitted bool   `json:"submitted"`
+	Inactive  bool   `json:"inactive"`
 }
 
 func generateRoundSummary(targetPlayerID game.PlayerID, g *game.Game, r *game.RoundData, roundNumber int) *roundMessage {
@@ -130,9 +131,10 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 
 	for _, p := range g.Players {
 		msg := playerMessage{
-			ID:    string(p.ID),
-			Name:  p.Name,
-			Score: p.Score,
+			ID:       string(p.ID),
+			Name:     p.Name,
+			Score:    p.Score,
+			Inactive: p.Inactive,
 		}
 		if _, ok := voted[p.ID]; ok {
 			msg.Voted = true
@@ -145,10 +147,13 @@ func newGameStateMessage(g *game.Game, targetPlayerID game.PlayerID) gameStateMe
 
 	// sort the players by score and then by name
 	sort.Slice(g.Players, func(i, j int) bool {
-		if g.Players[i].Score == g.Players[j].Score {
-			return strings.ToUpper(g.Players[i].Name) < strings.ToUpper(g.Players[j].Name)
+		if g.Players[i].Inactive == g.Players[j].Inactive {
+			if g.Players[i].Score == g.Players[j].Score {
+				return strings.ToUpper(g.Players[i].Name) < strings.ToUpper(g.Players[j].Name)
+			}
+			return g.Players[i].Score > g.Players[j].Score
 		}
-		return g.Players[i].Score > g.Players[j].Score
+		return !g.Players[i].Inactive
 	})
 	return m
 }
@@ -159,15 +164,10 @@ func (a *App) gameLoop(g *gameState) {
 		// Wait for something to happen
 		<-g.broadcastChan
 
-		// TODO: probably need some smarter locking around the reads to the message without
-		// locking on sends
 		for c, p := range g.Clients {
 			m := newGameStateMessage(g.Game, p)
 			err := c.WriteJSON(m)
 			if err != nil {
-				g.lock.Lock()
-				g.Game.SetPlayerInactive(p, true)
-				g.lock.Unlock()
 				c.Close()
 				delete(g.Clients, c)
 			}
@@ -183,9 +183,26 @@ func (a *App) gameLoop(g *gameState) {
 func (a *App) loop() {
 	for {
 		for _, g := range a.games {
+
+			dirty := false
+
 			if g.Game.Tick() {
+				dirty = true
+			}
+
+			for playerID, lastPing := range g.LastPing {
+				if inactive, err := g.Game.IsPlayerInactive(playerID); !inactive && err == nil {
+					if time.Since(lastPing) > time.Duration(15*time.Second) {
+						g.Game.SetPlayerInactive(playerID, true)
+						dirty = true
+					}
+				}
+			}
+
+			if dirty {
 				g.PushUpdate()
 			}
+
 		}
 		time.Sleep(time.Second)
 	}

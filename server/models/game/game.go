@@ -198,7 +198,7 @@ func (g *Game) PlayerExists(id PlayerID) bool {
 }
 
 // NameAvailable indicates if the name is available
-func (g* Game) NameAvailable(name string) bool {
+func (g *Game) NameAvailable(name string) bool {
 	for _, p := range g.Players {
 		if strings.ToLower(p.Name) == strings.TrimSpace(strings.ToLower(name)) {
 			return false
@@ -237,12 +237,22 @@ func (g *Game) RemovePlayer(id PlayerID) error {
 // This is mostly just a display thing and a way of shortening the voting / submission
 // process since we are waiting for the timer / all active players to vote.
 func (g *Game) SetPlayerInactive(id PlayerID, inactive bool) error {
+	fmt.Printf("SetInactive %s = %t\n", id, inactive)
 	_, p, err := g.findPlayer(id)
 	if err != nil || p.Deleted {
 		return fmt.Errorf("player does not exist")
 	}
 	p.Inactive = inactive
 	return nil
+}
+
+// IsPlayerInactive indicates if a player is inactive
+func (g *Game) IsPlayerInactive(id PlayerID) (bool, error) {
+	_, p, err := g.findPlayer(id)
+	if err != nil || p.Deleted {
+		return false, fmt.Errorf("player does not exist")
+	}
+	return p.Inactive, nil
 }
 
 func (g *Game) createNewRound() *RoundData {
@@ -380,9 +390,11 @@ func (g *Game) closeVotingForCurrentRound() error {
 	r.State = RoundStateVotingComplete
 	r.VotingCompleteStartTime = time.Now()
 	g.scoreRound()
+	/*  === some debate about whether the round summary is nice to see on the last round ====
 	if len(g.Rounds) == g.NumRounds {
 		g.completeCurrentRound()
 	}
+	*/
 	return nil
 }
 

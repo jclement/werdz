@@ -4,4 +4,5 @@ export interface player {
     score : number,
     voted : boolean,
     submitted: boolean,
+    inactive: boolean,
 }

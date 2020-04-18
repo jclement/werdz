@@ -12,6 +12,7 @@ import { GameScoreBoard } from './GameScoreBoard';
 import { GameTimer } from './GameTimer';
 import { game } from '../models/game';
 import { Alert } from 'react-bootstrap';
+import Axios from 'axios';
 
 interface GameProps {
   gameId: string,
@@ -19,12 +20,13 @@ interface GameProps {
   playerName: string,
 }
 
-interface GameState{
-  gameState : game | null
-  
+interface GameState {
+  gameState: game | null
 }
 
 export class Game extends Component<GameProps, GameState> {
+  intervalId: NodeJS.Timeout | null = null;
+  ws: JSX.Element | null = null;
 
   constructor(props: GameProps) {
     super(props)
@@ -33,17 +35,34 @@ export class Game extends Component<GameProps, GameState> {
       gameState: null,
     }
 
+    this.timer = this.timer.bind(this)
     this.onMessage = this.onMessage.bind(this)
   }
 
+  componentDidMount() {
+    this.intervalId = setInterval(this.timer, 10000);
+  }
+
+  componentWillUnmount() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+
+  timer() {
+    Axios.post("/api/game/" + this.props.gameId + "/ping", {
+      playerId: this.props.playerId
+    }).catch((e) => {} )
+
+  }
+
   onMessage(msg: any) {
-    let gameState : game | null 
+    let gameState: game | null
     gameState = JSON.parse(msg)
     this.setState({
       gameState: gameState
     })
   }
-
 
   render() {
     // URL for web socket
@@ -63,9 +82,10 @@ export class Game extends Component<GameProps, GameState> {
     return (
       <div>
         <br />
-        <Websocket url={ws_uri} onMessage={this.onMessage}  />
 
         {!this.state.gameState && <Alert variant="secondary">Loading or a bad room code.  Who knows!</Alert>}
+
+        <Websocket url={ws_uri} onMessage={this.onMessage} />
 
         {this.state.gameState && (this.state.gameState.state === 0 || this.state.gameState.state === 1) &&
           <div>

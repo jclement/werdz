@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"gitlab.adipose.net/jeff/werdz/models/game"
@@ -28,9 +29,10 @@ func (a *App) apiGameNew(w http.ResponseWriter, r *http.Request) {
 	g, _ := game.NewGame(wordFunc, game.ModeNormal, payload.Rounds, 60, 30)
 
 	newGame := &gameState{
-		Game:      g,
-		Clients:   make(map[*websocket.Conn]game.PlayerID),
+		Game:          g,
+		Clients:       make(map[*websocket.Conn]game.PlayerID),
 		broadcastChan: make(chan bool),
+		LastPing:      make(map[game.PlayerID]time.Time),
 	}
 
 	a.games[g.ID] = newGame

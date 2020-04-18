@@ -27,7 +27,7 @@ func (a *App) apiGameVote(w http.ResponseWriter, r *http.Request) {
 	roundID := game.RoundID(payload.RoundID)
 	definitionID := game.DefinitionID(payload.DefinitionID)
 
-	g, ok := a.games[id]
+	g, ok := a.getGame(id)
 	if !ok {
 		webservice.RespondWithError(w, http.StatusNotFound, "game does not exist")
 	}

@@ -7,3 +7,10 @@
 .numeric {
     text-align: right;
 }
+
+.footer {
+    padding-top: 20px;
+    text-align: center;
+    color: #888;
+    font-size: 10pt;
+}

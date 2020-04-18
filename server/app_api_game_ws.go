@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -18,7 +20,7 @@ func (a *App) apiGameWs(w http.ResponseWriter, r *http.Request) {
 	}
 	vars := mux.Vars(r)
 	id := vars["id"]
-	g, gameFound := a.games[game.GID(id)]
+	g, gameFound := a.getGame(game.GID(id))
 	if !gameFound {
 		webservice.RespondWithError(w, http.StatusNotFound, "game not found")
 		return
@@ -46,6 +48,7 @@ func (a *App) apiGameWs(w http.ResponseWriter, r *http.Request) {
 	g.lock.Lock()
 	defer g.lock.Unlock()
 	g.Clients[ws] = game.PlayerID(playerID)
+	g.LastPing[playerID] = time.Now()
 	// join or re-join the game as necessary
 	if !g.Game.PlayerExists(playerID) {
 		g.Game.AddPlayer(playerID, name)
@@ -55,6 +58,8 @@ func (a *App) apiGameWs(w http.ResponseWriter, r *http.Request) {
 	// give them the current state
 	m := newGameStateMessage(g.Game, playerID)
 	ws.WriteJSON(m)
+
+	fmt.Printf("Game %s joined by %s (%s)\n", id, name, string(playerID))
 
 	// let the world know we have a new player
 	g.PushUpdate()

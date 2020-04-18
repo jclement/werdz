@@ -26,7 +26,7 @@ func (a *App) apiGameSubmit(w http.ResponseWriter, r *http.Request) {
 	playerID := game.PlayerID(payload.PlayerID)
 	roundID := game.RoundID(payload.RoundID)
 
-	g, ok := a.games[id]
+	g, ok := a.getGame(id)
 	if !ok {
 		webservice.RespondWithError(w, http.StatusNotFound, "game does not exist")
 	}

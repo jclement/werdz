@@ -21,7 +21,7 @@ func (a *App) apiGameNameAvailable(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	if g, gameFound := a.games[game.GID(id)]; gameFound {
+	if g, gameFound := a.getGame(game.GID(id)); gameFound {
 		webservice.RespondWithJSON(w, http.StatusOK, g.Game.NameAvailable(payload.Name))
 	} else {
 		webservice.RespondWithError(w, http.StatusNotFound, "game does not exist")

@@ -81,7 +81,7 @@ export class Home extends Component<HomeProps, HomeState> {
                 <div>
                     <Row>
                         <Col>
-                            <div style={{ display: 'flex', justifyContent: 'center' }}><img className="img-fluid" src="title.png" alt="title" /></div>
+                            <div style={{textAlign: "center"}}><img className="img-fluid" src="title.png" alt="title" /></div>
                             <h1>Hello, {this.props.playerName || "Stranger!"}</h1>
                             <br />
                         </Col>

@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -16,6 +17,7 @@ import (
 type gameState struct {
 	Game          *game.Game
 	Clients       map[*websocket.Conn]game.PlayerID
+	LastPing      map[game.PlayerID]time.Time
 	lock          sync.Mutex
 	broadcastChan chan bool
 }
@@ -72,8 +74,10 @@ func (a *App) initializeRoutes() {
 	a.router.HandleFunc("/api/game/{id}/exists", a.apiGameExists).Methods("GET")
 	a.router.HandleFunc("/api/game/{id}/has_player", a.apiGameHasPlayer).Methods("POST")
 	a.router.HandleFunc("/api/game/{id}/name_available", a.apiGameNameAvailable).Methods("POST")
+	a.router.HandleFunc("/api/game/{id}/ping", a.apiGamePing).Methods("POST")
 }
 
+// getGame loads from disk if the game has been saved
 func (a *App) getGame(id game.GID) (*gameState, bool) {
 	if g, ok := a.games[id]; ok {
 		return g, true

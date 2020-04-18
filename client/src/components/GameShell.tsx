@@ -31,8 +31,13 @@ export class GameShell extends Component<GameShellProps, GameShellState> {
             nameIsAvailableRunning: props.playerName !== "",
         }
 
-        Axios.post('/api/game/' + props.gameId + '/has_player', {
-            playerId: props.playerId,
+        this.onNameUpdate = this.onNameUpdate.bind(this)
+        this.onJoin = this.onJoin.bind(this)
+    }
+
+    componentDidMount() {
+        Axios.post('/api/game/' + this.props.gameId + '/has_player', {
+            playerId: this.props.playerId,
         }).then((r) => {
             this.setState({
                 loading: false,
@@ -40,9 +45,9 @@ export class GameShell extends Component<GameShellProps, GameShellState> {
             })
         })
 
-        if (props.playerName.length > 0) {
+        if (this.props.playerName.length > 0) {
             Axios.post('/api/game/' + this.props.gameId + '/name_available', {
-                name:  props.playerName,
+                name:  this.props.playerName,
             }).then((r) => {
                 this.setState({
                     nameIsAvailable: r.data,
@@ -50,9 +55,6 @@ export class GameShell extends Component<GameShellProps, GameShellState> {
                 })
             })
         }
-
-        this.onNameUpdate = this.onNameUpdate.bind(this)
-        this.onJoin = this.onJoin.bind(this)
     }
 
     onNameUpdate(evt: any) {

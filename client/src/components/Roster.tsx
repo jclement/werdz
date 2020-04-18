@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table';
 import { game } from '../models/game';
-import { FaCheckCircle , FaUser } from 'react-icons/fa';
+import { FaCheckCircle, FaUser, FaGhost } from 'react-icons/fa';
 
 interface RosterProps {
     playerId: string
@@ -11,6 +11,11 @@ interface RosterProps {
 export class Roster extends Component<RosterProps, any> {
     render() {
         let statusMap: { [id: string]: boolean } = {}
+        let inactiveMap: { [id: string]: boolean } = {}
+
+        this.props.gameState.players.forEach((p) => {
+            inactiveMap[p.id] = p.inactive
+        })
 
         if (this.props.gameState.state === 1) {
             if (this.props.gameState.currentRound.state === 0) {
@@ -33,10 +38,11 @@ export class Roster extends Component<RosterProps, any> {
                 <tbody>
                     {this.props.gameState.players.map((p: any) => {
                         return (<tr key={p.id}>
-                            <td style={{textAlign: "center"}}>
-                                {this.props.playerId !== p.id && statusMap[p.id] ? <FaCheckCircle style={{color: "green"}} /> : null}
-                                {this.props.playerId === p.id && !statusMap[p.id] ? <FaUser/> : null}
-                                {this.props.playerId === p.id && statusMap[p.id] ? <FaUser style={{color: "green"}} /> : null}
+                            <td style={{ textAlign: "center" }}>
+                                {inactiveMap[p.id] ? <FaGhost style={{color: "gray"}} /> : null }
+                                {this.props.playerId !== p.id && statusMap[p.id] ? <FaCheckCircle style={{ color: "green" }} /> : null}
+                                {this.props.playerId === p.id && !statusMap[p.id] ? <FaUser /> : null}
+                                {this.props.playerId === p.id && statusMap[p.id] ? <FaUser style={{ color: "green" }} /> : null}
                             </td>
                             <td>{p.name}</td>
                             <td className="numeric">{p.score}</td>

@@ -12,7 +12,7 @@ export class About extends Component {
 
                 <p>If you have questions, suggestions, bug reports, etc. please submit them to <a href="mailto:werdz@werd.ca">werdz@werdz.ca</a></p>
 
-                <div style={{ display: 'flex', justifyContent: 'center' }}><img className="img-fluid" src="title.png" alt="title" /></div>
+                <div style={{textAlign: "center"}}><img className="img-fluid" src="title.png" alt="title" /></div>
             </div>
         );
     }
