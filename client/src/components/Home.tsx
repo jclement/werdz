@@ -130,7 +130,7 @@ export class Home extends Component<HomeProps, HomeState> {
                                     <b>Start a New Game</b>
                                 </div>
                                 <div className="card-body">
-                                    <Form onSubmit={(evt: any) => evt.preventDefault()}>>
+                                    <Form onSubmit={(evt: any) => evt.preventDefault()}>
                                         <Form.Group>
                                             <Form.Label>Number of Rounds:</Form.Label>
                                             <Form.Control as="select" value={this.state.rounds} onChange={this.setRounds}>
