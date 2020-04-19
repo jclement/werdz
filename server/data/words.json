@@ -3594,18 +3594,6 @@
     }
     {
       "word": {
-        "value": "lactarium",
-        "definition": "dairy farm or milking operation"
-      }
-    }
-    {
-      "word": {
-        "value": "lacteous",
-        "definition": "milky"
-      }
-    }
-    {
-      "word": {
         "value": "lactescent",
         "definition": "secreting milk"
       }
@@ -3614,18 +3602,6 @@
       "word": {
         "value": "lactiferous",
         "definition": "milk-bearing"
-      }
-    }
-    {
-      "word": {
-        "value": "lactifluous",
-        "definition": "flowing with milk"
-      }
-    }
-    {
-      "word": {
-        "value": "lactogenic",
-        "definition": "producing milk"
       }
     }
     {
@@ -4026,18 +4002,6 @@
     }
     {
       "word": {
-        "value": "lanyard",
-        "definition": "cord for hanging a knife or whistle around the neck"
-      }
-    }
-    {
-      "word": {
-        "value": "lanyard",
-        "definition": "rope or line for fastening something in a ship"
-      }
-    }
-    {
-      "word": {
         "value": "Laodicean",
         "definition": "lukewarm; half-hearted"
       }
@@ -4046,12 +4010,6 @@
       "word": {
         "value": "lapactic",
         "definition": "purgative"
-      }
-    }
-    {
-      "word": {
-        "value": "laparoscope",
-        "definition": "instrument for viewing interior of peritoneal cavity"
       }
     }
     {
@@ -4220,12 +4178,6 @@
       "word": {
         "value": "laryngology",
         "definition": "study of larynx"
-      }
-    }
-    {
-      "word": {
-        "value": "laryngoscope",
-        "definition": "instrument for examining interior of the larynx"
       }
     }
     {
@@ -4446,12 +4398,6 @@
     }
     {
       "word": {
-        "value": "lavatory",
-        "definition": "wash-basin for washing bodies of newly dead; room where lavabo kept"
-      }
-    }
-    {
-      "word": {
         "value": "laveer",
         "definition": "to sail against the wind"
       }
@@ -4478,12 +4424,6 @@
       "word": {
         "value": "lavra",
         "definition": "group of recluses' cells"
-      }
-    }
-    {
-      "word": {
-        "value": "lawn",
-        "definition": "fine sheer plain-woven cotton or linen"
       }
     }
     {
@@ -4520,12 +4460,6 @@
       "word": {
         "value": "lazaretto",
         "definition": "hospital for lepers"
-      }
-    }
-    {
-      "word": {
-        "value": "lea",
-        "definition": "arable land left fallow or used for pasture"
       }
     }
     {
@@ -4897,13 +4831,13 @@
     {
       "word": {
         "value": "leveret",
-        "definition": "a hare in its first year; a mistress"
+        "definition": "a hare in its first year or a mistress"
       }
     }
     {
       "word": {
         "value": "levigate",
-        "definition": "to smooth; to grind to a fine powder; to polish; to lighten"
+        "definition": "to smooth or polish; to grind to a fine powder"
       }
     }
     {
@@ -4922,12 +4856,6 @@
       "word": {
         "value": "lexer",
         "definition": "law student"
-      }
-    }
-    {
-      "word": {
-        "value": "lexicology",
-        "definition": "study of words and their meanings"
       }
     }
     {
@@ -5012,18 +4940,6 @@
       "word": {
         "value": "liber",
         "definition": "phloem or fibre from tree"
-      }
-    }
-    {
-      "word": {
-        "value": "liberalism",
-        "definition": "doctrine of social change and tolerance"
-      }
-    }
-    {
-      "word": {
-        "value": "libertarianism",
-        "definition": "doctrine that personal liberty is the highest value"
       }
     }
     {
@@ -5346,12 +5262,6 @@
     }
     {
       "word": {
-        "value": "linchpin",
-        "definition": "person or thing vital to an organization"
-      }
-    }
-    {
-      "word": {
         "value": "lincrusta",
         "definition": "thick embossed wallpaper"
       }
@@ -5496,12 +5406,6 @@
     }
     {
       "word": {
-        "value": "liquifaction",
-        "definition": "the act of liquefying something"
-      }
-    }
-    {
-      "word": {
         "value": "liripipe",
         "definition": "long tail of a graduate's hood; a part or lesson committed to memory"
       }
@@ -5516,12 +5420,6 @@
       "word": {
         "value": "lissotrichous",
         "definition": "smooth-haired"
-      }
-    }
-    {
-      "word": {
-        "value": "litany",
-        "definition": "prayer of supplication in responsive style"
       }
     }
     {
@@ -5672,12 +5570,6 @@
       "word": {
         "value": "lixiviation",
         "definition": "leaching"
-      }
-    }
-    {
-      "word": {
-        "value": "loan-word",
-        "definition": "word borrowed from another language"
       }
     }
     {
@@ -5887,7 +5779,7 @@
     {
       "word": {
         "value": "logogram",
-        "definition": "single sign standing for word or phrase"
+        "definition": "a single sign standing for a word or phrase"
       }
     }
     {
@@ -5899,7 +5791,7 @@
     {
       "word": {
         "value": "logogriph",
-        "definition": "riddle in which word is found from other words' letters"
+        "definition": "riddle in which a word is found from other words' letters"
       }
     }
     {
@@ -5935,7 +5827,7 @@
     {
       "word": {
         "value": "logorrhea",
-        "definition": "excessive flow of words; uncontrollable garrulity"
+        "definition": "excessive flow of words"
       }
     }
     {
@@ -6355,7 +6247,7 @@
     {
       "word": {
         "value": "luminist",
-        "definition": "artist who uses the effects of light; impressionist"
+        "definition": "artist who uses the effects of light"
       }
     }
     {
@@ -6430,13 +6322,7 @@
         "definition": "shaped like a wolf"
       }
     }
-    {
-      "word": {
-        "value": "lupine",
-        "definition": "of, like or pertaining to wolves"
-      }
-    }
-    {
+     {
       "word": {
         "value": "lupulic",
         "definition": "of, like or pertaining to hops"
@@ -6534,12 +6420,6 @@
     }
     {
       "word": {
-        "value": "luthier",
-        "definition": "maker of stringed instruments"
-      }
-    }
-    {
-      "word": {
         "value": "lutose",
         "definition": "covered with mud or clay; muddy"
       }
@@ -6596,12 +6476,6 @@
       "word": {
         "value": "lycanthropy",
         "definition": "mythical ability of humans to turn into wolves; werewolfism"
-      }
-    }
-    {
-      "word": {
-        "value": "lyceum",
-        "definition": "school of philosophical instruction"
       }
     }
     {
@@ -6822,12 +6696,6 @@
     }
     {
       "word": {
-        "value": "naissance",
-        "definition": "new development; birth"
-      }
-    }
-    {
-      "word": {
         "value": "naissant",
         "definition": "nascent, rising or coming forth"
       }
@@ -6954,12 +6822,6 @@
     }
     {
       "word": {
-        "value": "narcolepsy",
-        "definition": "pathological drowsiness"
-      }
-    }
-    {
-      "word": {
         "value": "narcology",
         "definition": "study and treatment of narcotic abuse"
       }
@@ -7050,18 +6912,6 @@
     }
     {
       "word": {
-        "value": "nary",
-        "definition": "not a one; not at all"
-      }
-    }
-    {
-      "word": {
-        "value": "nasal",
-        "definition": "nosepiece of a helmet"
-      }
-    }
-    {
-      "word": {
         "value": "nasard",
         "definition": "organ mutation stop"
       }
@@ -7128,12 +6978,6 @@
     }
     {
       "word": {
-        "value": "natation",
-        "definition": "swimming"
-      }
-    }
-    {
-      "word": {
         "value": "natational",
         "definition": "of or relating to swimming"
       }
@@ -7190,12 +7034,6 @@
       "word": {
         "value": "natuary",
         "definition": "hospital maternity ward"
-      }
-    }
-    {
-      "word": {
-        "value": "naturalism",
-        "definition": "belief that the world can be explained in terms of natural forces"
       }
     }
     {
@@ -7266,12 +7104,6 @@
     }
     {
       "word": {
-        "value": "nautics",
-        "definition": "art of navigation"
-      }
-    }
-    {
-      "word": {
         "value": "nautiliform",
         "definition": "having the shape of a nautilus"
       }
@@ -7286,12 +7118,6 @@
       "word": {
         "value": "navarchy",
         "definition": "rulership over the seas"
-      }
-    }
-    {
-      "word": {
-        "value": "nave",
-        "definition": "largest part of church where congregation sits"
       }
     }
     {
@@ -7344,18 +7170,6 @@
     }
     {
       "word": {
-        "value": "nearabout",
-        "definition": "nearby; in the vicinity"
-      }
-    }
-    {
-      "word": {
-        "value": "nearhand",
-        "definition": "nearly; almost"
-      }
-    }
-    {
-      "word": {
         "value": "neatherd",
         "definition": "cowherd"
       }
@@ -7400,12 +7214,6 @@
       "word": {
         "value": "nebulist",
         "definition": "artist whose style has indistinct lines"
-      }
-    }
-    {
-      "word": {
-        "value": "nebulize",
-        "definition": "to reduce to spray"
       }
     }
     {
@@ -7486,34 +7294,16 @@
         "definition": "feeding on the dead"
       }
     }
-    {
-      "word": {
-        "value": "necrophobia",
-        "definition": "fear of corpses"
-      }
-    }
-    {
+     {
       "word": {
         "value": "necropolitan",
-        "definition": "of or relating to a necropolis or cemetery; mournful; funereal"
+        "definition": "of or relating to a necropolis or cemetery"
       }
     }
     {
       "word": {
         "value": "necropsy",
         "definition": "post-mortem examination"
-      }
-    }
-    {
-      "word": {
-        "value": "necroscopy",
-        "definition": "examination of a dead body"
-      }
-    }
-    {
-      "word": {
-        "value": "necrotic",
-        "definition": "undergoing death of part of the body"
       }
     }
     {
@@ -7572,12 +7362,6 @@
     }
     {
       "word": {
-        "value": "needs",
-        "definition": "of necessity; necessarily"
-      }
-    }
-    {
-      "word": {
         "value": "neencephalon",
         "definition": "evolutionarily newer part of the vertebrate brain"
       }
@@ -7614,12 +7398,6 @@
     }
     {
       "word": {
-        "value": "negatory",
-        "definition": "no; expression of negation"
-      }
-    }
-    {
-      "word": {
         "value": "negentropy",
         "definition": "measurement of order or information of a system"
       }
@@ -7642,13 +7420,7 @@
         "definition": "one who is sympathetic towards black people"
       }
     }
-    {
-      "word": {
-        "value": "negrophobia",
-        "definition": "fear of blacks"
-      }
-    }
-    {
+     {
       "word": {
         "value": "nekton",
         "definition": "assemblage of swimming organisms in a body of water"
@@ -7657,7 +7429,7 @@
     {
       "word": {
         "value": "nelly",
-        "definition": "large South Pacific petrel"
+        "definition": "large South Pacific bird"
       }
     }
     {
@@ -7826,12 +7598,6 @@
       "word": {
         "value": "neonaticide",
         "definition": "killing or killer of a newborn infant"
-      }
-    }
-    {
-      "word": {
-        "value": "neonatology",
-        "definition": "study of newborn babies"
       }
     }
     {
@@ -8178,12 +7944,6 @@
     }
     {
       "word": {
-        "value": "neurobiology",
-        "definition": "study of anatomy of the nervous system"
-      }
-    }
-    {
-      "word": {
         "value": "neurogenesis",
         "definition": "production or generation of nerves"
       }
@@ -8264,12 +8024,6 @@
       "word": {
         "value": "nexility",
         "definition": "compactness of speech"
-      }
-    }
-    {
-      "word": {
-        "value": "nexus",
-        "definition": "a bond; a linked group"
       }
     }
     {
@@ -8442,20 +8196,8 @@
     }
     {
       "word": {
-        "value": "nihilism",
-        "definition": "denial of all reality; extreme scepticism"
-      }
-    }
-    {
-      "word": {
         "value": "nihility",
         "definition": "nothingness; a mere nothing"
-      }
-    }
-    {
-      "word": {
-        "value": "nil",
-        "definition": "nothing; not at all; in no way"
       }
     }
     {
@@ -8644,13 +8386,7 @@
         "definition": "record of one night's thoughts"
       }
     }
-    {
-      "word": {
-        "value": "nocuous",
-        "definition": "hurtful; noxious"
-      }
-    }
-    {
+     {
       "word": {
         "value": "nodality",
         "definition": "knottedness; state of being nodal"
@@ -8738,12 +8474,6 @@
       "word": {
         "value": "nomancy",
         "definition": "divination by examining letters of name"
-      }
-    }
-    {
-      "word": {
-        "value": "nomenclator",
-        "definition": "lexicon; word-list; one who assigns names"
       }
     }
     {
@@ -8842,25 +8572,13 @@
         "definition": "notwithstanding"
       }
     }
-    {
-      "word": {
-        "value": "nonpareil",
-        "definition": "thing of unequalled excellence; paragon"
-      }
-    }
-    {
+     {
       "word": {
         "value": "nonparous",
         "definition": "not having given birth"
       }
     }
-    {
-      "word": {
-        "value": "nonpathogenic",
-        "definition": "not causing disease"
-      }
-    }
-    {
+     {
       "word": {
         "value": "noogenesis",
         "definition": "evolution of the mind"
@@ -8892,12 +8610,6 @@
     }
     {
       "word": {
-        "value": "normalism",
-        "definition": "state of being normal"
-      }
-    }
-    {
-      "word": {
         "value": "norsel",
         "definition": "short piece of line for fastening fishing nets and hooks"
       }
@@ -8906,12 +8618,6 @@
       "word": {
         "value": "nosebag",
         "definition": "food bag hung over a horse's head"
-      }
-    }
-    {
-      "word": {
-        "value": "nosegay",
-        "definition": "bouquet of fragrant flowers"
       }
     }
     {
