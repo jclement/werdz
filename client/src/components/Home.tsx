@@ -130,7 +130,7 @@ export class Home extends Component<HomeProps, HomeState> {
                                     <b>Start a New Game</b>
                                 </div>
                                 <div className="card-body">
-                                    <Form>
+                                    <Form onSubmit={(evt: any) => evt.preventDefault()}>>
                                         <Form.Group>
                                             <Form.Label>Number of Rounds:</Form.Label>
                                             <Form.Control as="select" value={this.state.rounds} onChange={this.setRounds}>
@@ -158,7 +158,7 @@ export class Home extends Component<HomeProps, HomeState> {
                                     <b>Join a Game {this.state.gameCount > 0 ? <span>({this.state.gameCount} active)</span>: null}</b>
                                 </div>
                                 <div className="card-body">
-                                    <Form>
+                                    <Form onSubmit={(evt: any) => evt.preventDefault()}>
                                         <Form.Group>
                                             <Form.Label>Game Code:</Form.Label>
                                             <Form.Control type="text" isInvalid={!this.state.gameCodeExists && !!this.state.gameCode} maxLength={5} minLength={5} placeholder="i.e. DR27M" value={this.state.gameCode} onChange={this.setGameCode} />
