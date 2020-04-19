@@ -5,11 +5,12 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import { useHistory } from "react-router-dom";
 import Axios from 'axios';
+import { playClick } from '../Sounds';
 
 function HomeButton(props: { mode: number, rounds: number }) {
     let history = useHistory();
     return (<Button onClick={() => {
-        (new Audio("/sounds/click.mp3")).play()
+        playClick()
         Axios.post('/api/game/new', {
             rounds: props.rounds,
             mode: props.mode
@@ -24,7 +25,7 @@ function HomeButton(props: { mode: number, rounds: number }) {
 function JoinButton(props: { disabled: boolean, code: string }) {
     let history = useHistory();
     return (<Button disabled={props.disabled} onClick={() => {
-        (new Audio("/sounds/click.mp3")).play()
+        playClick()
         history.push('/game/' + props.code);
     }} variant="primary">Join Game</Button>);
 };

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Axios from 'axios';
 import { definition } from '../models/definition';
 import { ListGroup } from 'react-bootstrap';
+import { playClick } from '../Sounds';
 
 interface GameVotingFormProps {
     gameId: string,
@@ -19,7 +20,7 @@ export class GameVotingForm extends Component<GameVotingFormProps, any> {
     }
 
     vote(definitionId: string) {
-        (new Audio("/sounds/click.mp3")).play()
+        playClick()
         Axios.post("/api/game/" + this.props.gameId + "/vote", {
             playerId: this.props.playerId,
             roundId: this.props.roundId,

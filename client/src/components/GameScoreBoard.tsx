@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table'
 import { game } from '../models/game';
 import { FaTrophy } from 'react-icons/fa';
+import { playWin, playLose } from '../Sounds';
 
 interface GameScoreBoardProps {
     playerId: string,
@@ -16,9 +17,9 @@ export class GameScoreBoard extends Component<GameScoreBoardProps, any> {
         this.props.gameState.players.forEach((p) => {
             if (p.id === this.props.playerId) {
                 if (p.score === firstPlaceScore) {
-                    (new Audio("/sounds/win.mp3")).play()
+                    playWin()
                 } else {
-                    (new Audio("/sounds/lose.mp3")).play()
+                    playLose()
                 }
             }
         })

@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Game } from './Game';
 import Axios from 'axios';
+import { playClick } from '../Sounds';
 
 interface GameShellProps {
     gameId: string,
@@ -78,7 +79,7 @@ export class GameShell extends Component<GameShellProps, GameShellState> {
 
     onJoin(evt: any) {
         if (this.state.name && this.state.name.length > 0) {
-            (new Audio("/sounds/click.mp3")).play()
+            playClick()
             this.props.onSetName(this.state.name)
             this.setState({
                 hasJoined: true

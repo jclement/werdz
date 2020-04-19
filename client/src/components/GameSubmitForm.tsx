@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Axios from 'axios';
+import { playClick } from '../Sounds';
 
 interface GameSubmitFormProps {
     gameId: string,
@@ -27,7 +28,7 @@ export class GameSubmitForm extends Component<GameSubmitFormProps, GameSubmitFor
     }
 
     onSubmit(evt: any) {
-        (new Audio("/sounds/click.mp3")).play()
+        playClick()
         Axios.post("/api/game/" + this.props.gameId + "/submit", {
             playerId: this.props.playerId,
             roundId: this.props.roundId,

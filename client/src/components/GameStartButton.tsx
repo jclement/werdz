@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import Axios from 'axios';
+import { playClick } from '../Sounds';
 
 interface GameStartButtonProps {
     gameId: string,
@@ -15,7 +16,7 @@ export class GameStartButton extends Component<GameStartButtonProps, any> {
     }
 
     startGame() {
-        (new Audio("/sounds/click.mp3")).play()
+        playClick()
         Axios.post("/api/game/" + this.props.gameId + "/start", {
         }).then(() => {
         })
