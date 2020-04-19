@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table'
 import { game } from '../models/game';
+import { FaTrophy } from 'react-icons/fa';
 
 interface GameScoreBoardProps {
     playerId: string,
@@ -13,17 +14,34 @@ export class GameScoreBoard extends Component<GameScoreBoardProps, any> {
         let players: { [id: string]: string } = {}
         this.props.gameState.players.forEach((p) => { players[p.id] = p.name })
 
+        let place = 0
+        let placeScore = 9999999999
+
+
         return (
             <div>
                 <h2>Score Board</h2>
                 <Table striped bordered size="sm">
                     <thead>
-                        <tr><th>Player</th><th className="numeric">Score</th></tr>
+                        <tr><th style={{width: "80px"}}></th><th>Player</th><th className="numeric">Score</th></tr>
                     </thead>
                     <tbody>
                         {this.props.gameState.players.map((p: any) => {
-                            return (<tr key={p.id}>
-                                <td>{this.props.playerId === p.id ? <b>{p.name}</b> : p.name}</td>
+                            return (<tr key={p.id} style={p.id === this.props.playerId ? {backgroundColor: "lightblue"}: {}}>
+                                <td>
+                                    {
+                                        (() => {
+                                            if (p.score < placeScore) {
+                                                placeScore = p.score
+                                                place++
+                                            }
+                                        })()
+                                    }
+                                    {place ===  1 && <span><FaTrophy />&nbsp;&nbsp;1st</span>}
+                                    {place ===  2 && <span><FaTrophy />&nbsp;&nbsp;2nd</span>}
+                                    {place ===  3 && <span><FaTrophy />&nbsp;&nbsp;3rd</span>}
+                                </td>
+                                <td>{p.name}</td>
                                 <td className="numeric">{p.score}</td>
                             </tr>);
                         })}
@@ -46,7 +64,7 @@ export class GameScoreBoard extends Component<GameScoreBoardProps, any> {
                                             <li key={d.id}>
                                                 <b style={{
                                                     color: d.player ? (d.player === this.props.playerId ? "blue" : "black") : "green"
-                                                }}>{d.definition}</b>
+                                                }}>{d.definition}</b> {!d.player && <span> (the correct answer)</span>}
                                                 {d.player && <span>&nbsp;(by {players[d.player]})</span>}
                                                 <ul>
                                                     {(d.votes || []).map((v) => (
