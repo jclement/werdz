@@ -7,7 +7,7 @@ export class Footer extends Component {
                 <div className="footer">
                     <div className="footer-links">
                         <div className="footer-attribution">
-                            A silly game written by <a href="https://zeos.ca/contact/">Jeff Clement</a>
+                            A silly game written by <a href="https://zeos.ca/about/">Jeff Clement</a>
                         </div>
                     </div>
                 </div>
