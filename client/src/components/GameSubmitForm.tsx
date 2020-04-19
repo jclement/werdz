@@ -48,7 +48,7 @@ export class GameSubmitForm extends Component<GameSubmitFormProps, GameSubmitFor
             <div>
                 <Form onSubmit={this.onSubmit}>
                     <Form.Group controlId="def">
-                        <Form.Label>Definition</Form.Label>
+                        <Form.Label>Definition:</Form.Label>
                         <Form.Control value={this.state.definition} onChange={this.onDefChange} type="text" placeholder="Enter definition" />
                     </Form.Group>
                     <Button variant="primary" disabled={!this.state.definition} type="submit">
