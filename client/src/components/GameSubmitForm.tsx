@@ -27,6 +27,7 @@ export class GameSubmitForm extends Component<GameSubmitFormProps, GameSubmitFor
     }
 
     onSubmit(evt: any) {
+        (new Audio("/sounds/click.mp3")).play()
         Axios.post("/api/game/" + this.props.gameId + "/submit", {
             playerId: this.props.playerId,
             roundId: this.props.roundId,

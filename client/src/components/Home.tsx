@@ -9,6 +9,7 @@ import Axios from 'axios';
 function HomeButton(props: { mode: number, rounds: number }) {
     let history = useHistory();
     return (<Button onClick={() => {
+        (new Audio("/sounds/click.mp3")).play()
         Axios.post('/api/game/new', {
             rounds: props.rounds,
             mode: props.mode
@@ -23,6 +24,7 @@ function HomeButton(props: { mode: number, rounds: number }) {
 function JoinButton(props: { disabled: boolean, code: string }) {
     let history = useHistory();
     return (<Button disabled={props.disabled} onClick={() => {
+        (new Audio("/sounds/click.mp3")).play()
         history.push('/game/' + props.code);
     }} variant="primary">Join Game</Button>);
 };

@@ -19,6 +19,7 @@ export class GameVotingForm extends Component<GameVotingFormProps, any> {
     }
 
     vote(definitionId: string) {
+        (new Audio("/sounds/click.mp3")).play()
         Axios.post("/api/game/" + this.props.gameId + "/vote", {
             playerId: this.props.playerId,
             roundId: this.props.roundId,

@@ -15,6 +15,7 @@ export class GameStartButton extends Component<GameStartButtonProps, any> {
     }
 
     startGame() {
+        (new Audio("/sounds/click.mp3")).play()
         Axios.post("/api/game/" + this.props.gameId + "/start", {
         }).then(() => {
         })

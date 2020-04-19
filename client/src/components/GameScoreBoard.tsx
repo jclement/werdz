@@ -9,6 +9,21 @@ interface GameScoreBoardProps {
 }
 
 export class GameScoreBoard extends Component<GameScoreBoardProps, any> {
+
+    componentDidMount() {
+        if (!this.props.gameState.players || this.props.gameState.players.length === 0) return;
+        let firstPlaceScore = this.props.gameState.players[0].score;
+        this.props.gameState.players.forEach((p) => {
+            if (p.id === this.props.playerId) {
+                if (p.score === firstPlaceScore) {
+                    (new Audio("/sounds/win.mp3")).play()
+                } else {
+                    (new Audio("/sounds/lose.mp3")).play()
+                }
+            }
+        })
+    }
+
     render() {
 
         let players: { [id: string]: string } = {}

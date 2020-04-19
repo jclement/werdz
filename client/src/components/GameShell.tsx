@@ -78,6 +78,7 @@ export class GameShell extends Component<GameShellProps, GameShellState> {
 
     onJoin(evt: any) {
         if (this.state.name && this.state.name.length > 0) {
+            (new Audio("/sounds/click.mp3")).play()
             this.props.onSetName(this.state.name)
             this.setState({
                 hasJoined: true
