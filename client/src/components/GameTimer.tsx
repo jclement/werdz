@@ -48,7 +48,6 @@ export class GameTimer extends Component<GameTimerProps, any> {
     render() {
         return (
             <div>
-                <br />
                 {this.state.remaining > 0 &&
                     <ProgressBar variant={this.state.remaining < 5 ? "danger" : (this.state.remaining < 10 ? "warning" : undefined)} now={(this.state.remaining / this.props.total) * 100} label={Math.round(this.state.remaining) + "s"} />
                 }

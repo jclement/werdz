@@ -53,9 +53,9 @@ export class GameScoreBoard extends Component<GameScoreBoardProps, any> {
                                             }
                                         })()
                                     }
-                                    {place ===  1 && <span><FaTrophy />&nbsp;&nbsp;1st</span>}
-                                    {place ===  2 && <span><FaTrophy />&nbsp;&nbsp;2nd</span>}
-                                    {place ===  3 && <span><FaTrophy />&nbsp;&nbsp;3rd</span>}
+                                    {place ===  1 && <span><FaTrophy style={{color: "#ffbf00"}} />&nbsp;&nbsp;1st</span>}
+                                    {place ===  2 && <span><FaTrophy style={{color: "#708090"}} />&nbsp;&nbsp;2nd</span>}
+                                    {place ===  3 && <span><FaTrophy style={{color: "#8B4513"}} />&nbsp;&nbsp;3rd</span>}
                                 </td>
                                 <td>{p.name}</td>
                                 <td className="numeric">{p.score}</td>
@@ -72,7 +72,7 @@ export class GameScoreBoard extends Component<GameScoreBoardProps, any> {
                         <div key={r.id}>
                             <div className="card">
                                 <div className="card-header">
-                                    <h4>Round {r.num} - <b>{r.word}</b></h4>
+                                    Round {r.num} - <b>{r.word}</b>
                                 </div>
                                 <div className="card-body">
                                     <ul>

@@ -9,9 +9,8 @@ import { GameSubmitForm } from './GameSubmitForm';
 import { GameVotingForm } from './GameVotingForm';
 import { GameRoundSummary } from './GameRoundSummary';
 import { GameScoreBoard } from './GameScoreBoard';
-import { GameTimer } from './GameTimer';
 import { game } from '../models/game';
-import { Alert } from 'react-bootstrap';
+import { Alert, Spinner } from 'react-bootstrap';
 import Axios from 'axios';
 import { GameRules } from './GameRules';
 
@@ -22,7 +21,8 @@ interface GameProps {
 }
 
 interface GameState {
-  gameState: game | null
+  gameState: game | null,
+  error: boolean,
 }
 
 export class Game extends Component<GameProps, GameState> {
@@ -34,10 +34,25 @@ export class Game extends Component<GameProps, GameState> {
 
     this.state = {
       gameState: null,
+      error: false
     }
 
     this.timer = this.timer.bind(this)
     this.onMessage = this.onMessage.bind(this)
+    this.onSocketError = this.onSocketError.bind(this)
+    this.onSocketConnect = this.onSocketConnect.bind(this)
+  }
+
+  onSocketError() {
+    this.setState({
+      error: true
+    })
+  }
+
+  onSocketConnect() {
+    this.setState({
+      error: false
+    })
   }
 
   componentDidMount() {
@@ -80,13 +95,17 @@ export class Game extends Component<GameProps, GameState> {
       return null
     }
 
+    if (this.state.error) {
+      return <Alert variant="danger">Error connecting to server.  Try reloading the page.</Alert>;
+    }
+
     return (
       <div>
         <br />
 
-        {!this.state.gameState && <Alert variant="secondary">Loading or a bad room code.  Who knows!</Alert>}
+        {!this.state.gameState && <Spinner animation="border" />}
 
-        <Websocket url={ws_uri} onMessage={this.onMessage} />
+        <Websocket url={ws_uri} onMessage={this.onMessage} onConnect={this.onSocketConnect} onError={this.onSocketError} />
 
         {this.state.gameState && (this.state.gameState.state === 0 || this.state.gameState.state === 1) &&
           <div>
@@ -98,7 +117,6 @@ export class Game extends Component<GameProps, GameState> {
                 {this.state.gameState.canVote && <GameVotingForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.currentRound.id} definitions={this.state.gameState.currentRound.definitions} />}
                 {this.state.gameState.currentRound && this.state.gameState.currentRound.state === 2 && <GameRoundSummary playerId={this.props.playerId} gameState={this.state.gameState} />}
                 {this.state.gameState.state === 0 && <GameRules mode={this.state.gameState.mode} rounds={this.state.gameState.totalRounds} />}
-                <GameTimer remaining={this.state.gameState.remainingTime} total={this.state.gameState.totalTime} />
                 <br />
               </Col>
               <Col sm={4}>

@@ -16,7 +16,7 @@ export class GameRoundSummary extends Component<GameRoundSummaryProps, any> {
             <div>
                 <div className="card">
                     <div className="card-header">
-                        <h4>Round {this.props.gameState.currentRound.num} Summary - <b>{this.props.gameState.currentRound.word}</b></h4>
+                        Round {this.props.gameState.currentRound.num} Summary - <b>{this.props.gameState.currentRound.word}</b>
                     </div>
                     <div className="card-body">
                         <ul>

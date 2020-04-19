@@ -20,7 +20,7 @@ export class Rules extends Component {
 
                 <div className="card">
                     <div className="card-header">
-                        <h4>Rules for Normal Mode</h4>
+                        Rules for <b>Real Word</b> (Normal) Mode
                     </div>
                     <div className="card-body">
                         <ul>
@@ -39,7 +39,7 @@ export class Rules extends Component {
 
                 <div className="card">
                     <div className="card-header">
-                        <h4>Rules for this game</h4>
+                        Rules for <b>Fake Word</b> Mode 
                     </div>
                     <div className="card-body">
                         <ul>

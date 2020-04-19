@@ -12,17 +12,25 @@ export class About extends Component {
 
                 <p>If you have questions, suggestions, bug reports, etc. please submit them to <a href="mailto:werdz@werd.ca">werdz@werdz.ca</a> or <a href="https://twitter.com/werdzgame">@werdzgame</a>.</p>
 
-                <div style={{textAlign: "center"}}><img className="img-fluid" src="title.png" alt="title" /></div>
+                <div style={{ textAlign: "center" }}><img className="img-fluid" src="title.png" alt="title" /></div>
 
-                <h4>Credits</h4>
-                <ul>
-                    <li>Sound Effects:
+                <div className="card">
+                    <div className="card-header">
+                        Credits
+                    </div>
+                    <div className="card-body">
                         <ul>
-                            <li><a href="https://freesound.org/people/LittleRobotSoundFactory/sounds/270402/">game winning sound</a> by LittleRobotSoundFactory</li>
-                            <li><a href="https://freesound.org/people/Timbre/sounds/73750/">game losing sound</a> by Timbre</li>
+                            <li>Words &amp; definitions by <a href="https://randomwordgenerator.com">RandomWordGenerator.com</a></li>
+                            <li>Sound Effects:
+                        <ul>
+                                    <li><a href="https://freesound.org/people/LittleRobotSoundFactory/sounds/270402/">game winning sound</a> by LittleRobotSoundFactory</li>
+                                    <li><a href="https://freesound.org/people/Timbre/sounds/73750/">game losing sound</a> by Timbre</li>
+                                </ul>
+                            </li>
                         </ul>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         );
-    } }
+    }
+}
