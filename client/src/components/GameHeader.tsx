@@ -13,7 +13,7 @@ export class GameHeader extends Component<GameHeaderProps, any> {
 
         return (
             <div>
-                <h1>Game <b>{this.props.gameId}</b></h1>
+                <h2>Game <b>{this.props.gameId}</b></h2>
                 {this.props.gameState.state === 1 &&
                     <table style={{width: "100%", marginBottom: "20px"}}>
                         <tbody>

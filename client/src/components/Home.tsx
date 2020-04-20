@@ -123,11 +123,10 @@ export class Home extends Component<HomeProps, HomeState> {
                         <Col>
                             <div style={{textAlign: "center"}}><img className="img-fluid" src="title.png" alt="title" /></div>
                             <h1>Hello, {this.props.playerName || "Stranger!"}</h1>
-                            <br />
                         </Col>
                     </Row>
                     <Row>
-                        <Col sm={6}>
+                        <Col md={6}>
                             <div className="card">
                                 <div className="card-header">
                                     <b>Start a New Game</b>
@@ -155,7 +154,7 @@ export class Home extends Component<HomeProps, HomeState> {
                             </div>
                             <br />
                         </Col>
-                        <Col sm={6}>
+                        <Col md={6}>
                             <div className="card">
                                 <div className="card-header">
                                     <b>Join a Game {this.state.gameCount > 0 ? <span>({this.state.gameCount} active)</span>: null}</b>

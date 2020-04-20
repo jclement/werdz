@@ -24,7 +24,7 @@ export class GameRoundSummary extends Component<GameRoundSummaryProps, any> {
                                 <li key={d.id}>
                                     <b style={{ 
                                         color: d.player ? (d.player === this.props.playerId ? "blue": "black") : "green" 
-                                        }}>{d.definition}</b>
+                                        }}>{d.definition}</b> {!d.player && <span> (the correct answer)</span>}
                                     {d.player && <span>&nbsp;(by {players[d.player]})</span>}
                                     <ul>
                                         {(d.votes || []).map((v) => (

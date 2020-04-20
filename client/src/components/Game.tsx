@@ -110,16 +110,15 @@ export class Game extends Component<GameProps, GameState> {
         {this.state.gameState && (this.state.gameState.state === 0 || this.state.gameState.state === 1) &&
           <div>
             <Row>
-              <Col sm={8}>
+              <Col md={8} style={{paddingBottom: "15px"}}>
                 <GameHeader gameId={this.props.gameId} gameState={this.state.gameState} />
-                {this.state.gameState.canStart && <GameStartButton gameId={this.props.gameId} />}
                 {this.state.gameState.canSubmit && <GameSubmitForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.currentRound.id} />}
                 {this.state.gameState.canVote && <GameVotingForm gameId={this.props.gameId} playerId={this.props.playerId} roundId={this.state.gameState.currentRound.id} definitions={this.state.gameState.currentRound.definitions} />}
                 {this.state.gameState.currentRound && this.state.gameState.currentRound.state === 2 && <GameRoundSummary playerId={this.props.playerId} gameState={this.state.gameState} />}
+                {this.state.gameState.canStart && <div style={{paddingBottom: "15px"}}><GameStartButton gameId={this.props.gameId} /></div>}
                 {this.state.gameState.state === 0 && <GameRules mode={this.state.gameState.mode} rounds={this.state.gameState.totalRounds} />}
-                <br />
               </Col>
-              <Col sm={4}>
+              <Col md={4}>
                 <Roster gameState={this.state.gameState} playerId={this.props.playerId} />
               </Col>
             </Row>

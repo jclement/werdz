@@ -8,10 +8,10 @@ interface GameRulesProps {
 export class GameRules extends Component<GameRulesProps, any> {
     render() {
         return (
-            <div style={{paddingTop: "20px"}}>
+            <div>
                 <div className="card">
                     <div className="card-header">
-                        <h4>Rules for this game</h4>
+                        Rules for this game
                     </div>
                     <div className="card-body">
                         {this.props.mode === 0 && <ul>
