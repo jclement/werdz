@@ -2,11 +2,11 @@
 ## Bind service to IP/Port #########################################
 ## Note: binding to localhost prevents the annoying Mac firewall error on every exec
 #Listen: 127.0.0.1:5000
-#Listen: :8100
+Listen: :80
 
 ## Static Files Directory ##########################################
-#StaticDir: ./static/
+StaticDir: ./static/
 
 ## word files directory ############################################
-#Words: ./data/words.json
-#FakeWords: ./data/fake-words.json
+Words: ./data/words.json
+FakeWords: ./data/fake-words.json
