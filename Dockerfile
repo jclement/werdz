@@ -8,9 +8,9 @@ RUN npm run build
 FROM golang as server-build-step
 WORKDIR /build
 COPY ./server ./
-RUN go build .
+RUN go build -tags netgo -a -v .
 
-FROM golang
+FROM alpine
 WORKDIR /app
 EXPOSE 80
 RUN mkdir data
