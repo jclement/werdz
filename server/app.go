@@ -12,7 +12,6 @@ import (
 	"gitlab.adipose.net/jeff/werdz/models/fakewords"
 	"gitlab.adipose.net/jeff/werdz/models/game"
 	"gitlab.adipose.net/jeff/werdz/models/words"
-	"gitlab.adipose.net/jeff/werdz/util/mattermost"
 )
 
 type gameState struct {
@@ -32,7 +31,6 @@ func (g *gameState) PushUpdate() {
 // App represents an instance of the application server
 type App struct {
 	router    *mux.Router
-	webhook   mattermost.Webhook
 	games     map[game.GID]*gameState
 	realWords words.WordSet
 	fakeWords fakewords.FakeWordSet
@@ -45,18 +43,18 @@ func (a *App) Initialize() {
 	a.games = make(map[game.GID]*gameState)
 }
 
-// SetMattermostWebhook sets a webhook for mattermost logging
-func (a *App) SetMattermostWebhook(w mattermost.Webhook) {
-	a.webhook = w
-}
-
 // Run starts the application server runnning
-func (a *App) Run(addr string) {
+func (a *App) Run(addr string, staticDir string) {
 	n := negroni.New()
 
 	n.Use(negroni.NewLogger())
 	n.Use(negroni.NewRecovery())
+	if (staticDir != "") {
+		n.Use(negroni.NewStatic(http.Dir(staticDir)))
+	}
 	n.UseHandler(a.router)
+
+	// static
 
 	log.Printf("Starting service on %s", addr)
 

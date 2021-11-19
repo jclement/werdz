@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -36,10 +35,6 @@ func (a *App) apiGameSubmit(w http.ResponseWriter, r *http.Request) {
 	defer g.lock.Unlock()
 	if err := g.Game.SubmitWord(playerID, roundID, payload.Definition); err != nil {
 		webservice.RespondWithError(w, http.StatusInternalServerError, err.Error())
-	} else {
-		if p, err := g.Game.FindPlayer(playerID); err == nil {
-			a.webhook.Post(fmt.Sprintf("[%s / Round %d] Player '%s' submitted '%s' for '%s'", id, len(g.Game.Rounds), p.Name, payload.Definition, g.Game.CurrentRound().Word))
-		}
 	}
 
 	g.PushUpdate()

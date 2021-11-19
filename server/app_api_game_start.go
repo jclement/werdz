@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -27,8 +26,6 @@ func (a *App) apiGameStart(w http.ResponseWriter, r *http.Request) {
 	}
 
 	g.PushUpdate()
-
-	a.webhook.Post(fmt.Sprintf("Starting new game %s", id))
 
 	webservice.RespondWithJSON(w, http.StatusOK, nil)
 }

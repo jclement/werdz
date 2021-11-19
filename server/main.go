@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/spf13/viper"
-	"gitlab.adipose.net/jeff/werdz/util/mattermost"
 )
 
 func main() {
@@ -17,6 +16,7 @@ func main() {
 	viper.SetDefault("Listen", "localhost:8100")
 	viper.SetDefault("Words", "./data/words.json")
 	viper.SetDefault("FakeWords", "./data/fake-words.json")
+	viper.SetDefault("StaticDir", "./static")
 
 	// Parse configuration files
 	viper.SetConfigName("werdz.yaml")
@@ -49,11 +49,5 @@ func main() {
 	defer rdr.Close()
 	a.fakeWords.Load(rdr)
 
-	a.SetMattermostWebhook(mattermost.New(
-		viper.GetString("WebhookURL"),
-		viper.GetString("WebhookUser"),
-		viper.GetString("WebhookImageURL"),
-	))
-
-	a.Run(viper.GetString("Listen"))
+	a.Run(viper.GetString("Listen"), viper.GetString("StaticDir"))
 }
