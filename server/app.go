@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -47,9 +48,16 @@ func (a *App) Initialize() {
 func (a *App) Run(addr string, staticDir string) {
 	n := negroni.New()
 
+	if staticDir != "" {
+		a.router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			http.ServeFile(w, r, filepath.Join(staticDir, "index.html"))
+		})
+
+	}
+
 	n.Use(negroni.NewLogger())
 	n.Use(negroni.NewRecovery())
-	if (staticDir != "") {
+	if staticDir != "" {
 		n.Use(negroni.NewStatic(http.Dir(staticDir)))
 	}
 	n.UseHandler(a.router)
