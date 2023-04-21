@@ -1,4 +1,4 @@
-FROM node:lts-alpine as client-build-step
+FROM node:16-alpine as client-build-step
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY ./client  ./
